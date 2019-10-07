@@ -1,0 +1,18 @@
+#启动端口
+server:
+  port: 9202
+
+#启用环境
+#spring:
+#  profiles:
+#    active: dev
+
+#配置开启sentinel actuator 测试接口
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
