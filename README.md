@@ -14,3 +14,5 @@
     @SpringBootApplication(excludeName = {"com.likaladi.db.base"})
 ## gateway网关启动失败原因
     必须排除相关web依赖：spring-boot-starter-web
+## gateway网关跨域解决：
+    com.ec.gateway.config.cors.CorsConfiguration

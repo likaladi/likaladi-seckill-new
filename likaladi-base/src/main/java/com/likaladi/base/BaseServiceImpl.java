@@ -74,6 +74,38 @@ public class BaseServiceImpl<T> implements BaseService<T> {
     }
 
     @Override
+    public List<T> findListBy(String fieldName, Object value) {
+        try {
+            T model = modelClass.newInstance();
+            Field field = modelClass.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(model, value);
+            return commonMapper.select(model);
+        } catch (ReflectiveOperationException e) {
+            log.error("查询对象信息失败：", e);
+            ErrorBuilder.throwMsg("查询对象信息失败");
+        }
+        return null;
+    }
+
+    @Override
+    public List<T> findListBy(List<String> fieldNames, List<Object> values) {
+        try {
+            T model = modelClass.newInstance();
+            for(int i = 0; i < fieldNames.size(); i++){
+                Field field = modelClass.getDeclaredField(fieldNames.get(i));
+                field.setAccessible(true);
+                field.set(model, values.get(i));
+            }
+            return commonMapper.select(model);
+        } catch (ReflectiveOperationException e) {
+            log.error("查询对象信息失败：", e);
+            ErrorBuilder.throwMsg("查询对象信息失败");
+        }
+        return null;
+    }
+
+    @Override
     public List<T> findByIds(String ids) {
         return commonMapper.selectByIds(ids);
     }

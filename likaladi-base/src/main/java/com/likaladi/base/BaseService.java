@@ -44,6 +44,10 @@ public interface BaseService<T> {
      */
     T findBy(String fieldName, Object value);
 
+    List<T> findListBy(String fieldName, Object value);
+
+    List<T> findListBy(List<String> fieldNames, List<Object> values);
+
     /**
      * 通过多个ID查找//eg：ids -> “1,2,3,4”
      * @param ids

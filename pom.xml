@@ -4,6 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	<modules>
+        <module>likaladi-manager</module>
 		<module>likaladi-gateway</module>
         <module>likaladi-auth</module>
         <module>likaladi-user</module>

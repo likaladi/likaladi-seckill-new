@@ -1,0 +1,9 @@
+#配置开启sentinel actuator 测试接口
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

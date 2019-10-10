@@ -1,4 +1,4 @@
-package com.likaladi.user.config.swagger;
+package com.likaladi.manager.config.swagger;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +36,7 @@ public class SwaggerConfig {
                 .apiInfo(defaultTitleInfo())
                 .select()
                 // 自行修改为自己的包路径
-                .apis(RequestHandlerSelectors.basePackage("com.likaladi.user"))
+                .apis(RequestHandlerSelectors.basePackage("com.likaladi.manager"))
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
@@ -63,7 +63,7 @@ public class SwaggerConfig {
      */
     private ApiInfo defaultTitleInfo() {
         // 大标题
-        return new ApiInfoBuilder().title("用户中心swagger接口文档")
+        return new ApiInfoBuilder().title("后台管理swagger接口文档")
                 // 详细描述
                 .description("return json风格接口")
                 .contact(new Contact("likaladi", "", "1401112764@qq.com"))

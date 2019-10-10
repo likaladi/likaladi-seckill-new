@@ -26,4 +26,9 @@ spring:
             - Path=/userApi/**
           filters:
             - StripPrefix=1
-
+        - id: likaladi-manager
+          uri: lb://likaladi-manager
+          predicates:
+            - Path=/managerApi/**
+          filters:
+            - StripPrefix=1

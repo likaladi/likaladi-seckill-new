@@ -1,9 +1,11 @@
 package com.likaladi.auth.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.likaladi.enums.BaseError;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.user.model.UserAuth;
 import com.likaladi.user.vo.LoginVo;
+import com.likaladi.user.vo.RoleVo;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +34,7 @@ public class AuthUtil {
     public static final String AUTH_TOKEN = "X-Auth-Token";
 
 
-    public UserAuth getLoginUserInfo() {
+    public static UserAuth getLoginUserInfo() {
         HttpServletRequest request = getRequest();
         UserAuth userAuthResp = (UserAuth) request.getAttribute(AUTH_USER);
         return userAuthResp;
@@ -41,7 +44,7 @@ public class AuthUtil {
         return getLoginUserInfo().getUserId();
     }
 
-    public HttpServletRequest getRequest() {
+    public static HttpServletRequest getRequest() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes sra = (ServletRequestAttributes) requestAttributes;
         RequestContextHolder.setRequestAttributes(sra, true);
@@ -60,6 +63,7 @@ public class AuthUtil {
         Map<String, Object> userInfoMap = new HashMap<>(3);
         userInfoMap.put("userId", userAuth.getUserId());
         userInfoMap.put("username", userAuth.getUsername());
+        userInfoMap.put("roles", JSONObject.toJSONString(userAuth.getRoles()));
 
         //创建token
         String token = jwtOperatorUtil.generateToken(userInfoMap);
@@ -83,7 +87,8 @@ public class AuthUtil {
 
             UserAuth userAuthResp = UserAuth.builder()
                     .userId(Long.parseLong(String.valueOf(claims.get("userId"))))
-                    .username(String.valueOf(claims.get("username"))).build();
+                    .username(String.valueOf(claims.get("username")))
+                    .roles(JSONObject.parseArray((String.valueOf(claims.get("roles"))),RoleVo.class)).build();
 
             request.setAttribute(AuthUtil.AUTH_USER, userAuthResp);
 

@@ -1,0 +1,6 @@
+#所有环境公用的配置属性
+server:
+  port: 8080
+spring:
+  profiles:
+    active: dev

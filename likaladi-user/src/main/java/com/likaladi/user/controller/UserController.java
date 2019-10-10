@@ -1,5 +1,6 @@
 package com.likaladi.user.controller;
 
+import com.likaladi.auth.util.AuthUtil;
 import com.likaladi.user.dto.LoginDto;
 import com.likaladi.user.service.UserService;
 import com.likaladi.user.model.UserAuth;
@@ -25,6 +26,14 @@ public class UserController {
     @PostMapping("/login")
     public LoginVo login(@RequestBody @Valid LoginDto loginDto) {
         return userService.login(loginDto);
+    }
+
+    /**
+     * 当前登录用户 LoginAppUser
+     */
+    @GetMapping("/current")
+    public UserAuth getLoginAppUser() {
+        return AuthUtil.getLoginUserInfo();
     }
 
 }
