@@ -129,7 +129,7 @@ public class BaseServiceImpl<T> implements BaseService<T> {
 
     @Override
     public void update(T t) {
-        if(commonMapper.updateByPrimaryKey(t) == 0){
+        if(commonMapper.updateByPrimaryKeySelective(t) == 0){
             ErrorBuilder.throwMsg("更新失败");
         }
     }

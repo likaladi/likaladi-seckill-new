@@ -1,7 +1,6 @@
 package com.likaladi.user.service.impl;
 
 import com.likaladi.auth.util.AuthUtil;
-import com.likaladi.auth.util.CodecUtils;
 import com.likaladi.base.BaseServiceImpl;
 import com.likaladi.enums.BaseError;
 import com.likaladi.error.ErrorBuilder;

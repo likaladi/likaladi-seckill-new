@@ -3,9 +3,15 @@ package com.likaladi.user.entity;
 import javax.persistence.*;
 
 import com.likaladi.base.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "sys_role_permission")
 public class RolePermission extends BaseEntity {
 

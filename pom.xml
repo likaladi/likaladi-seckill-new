@@ -8,6 +8,7 @@
 		<module>likaladi-gateway</module>
         <module>likaladi-auth</module>
         <module>likaladi-user</module>
+		<module>likaladi-goods</module>
         <module>likaladi-base</module>
         <module>likaladi-api-model</module>
     </modules>

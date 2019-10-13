@@ -1,16 +1,20 @@
 package com.likaladi.manager.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.likaladi.auth.util.AuthUtil;
+import com.likaladi.error.ErrorBuilder;
+import com.likaladi.manager.dto.MenuDto;
 import com.likaladi.manager.entity.Menu;
 import com.likaladi.manager.service.MenuService;
 import com.likaladi.user.model.UserAuth;
 import com.likaladi.user.vo.RoleVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -86,36 +90,37 @@ public class MenuController {
 //		menuService.setMenuToRole(roleId, menuIds);
 //	}
 //
-//	/**
-//	 * 菜单树ztree
-//	 */
+	/**
+	 *
+	 */
+	@ApiOperation(value = "菜单树ztree接口", notes = "菜单树ztree接口", httpMethod = "GET")
 //	@PreAuthorize("hasAnyAuthority('back:menu:set2role','back:menu:query')")
-//	@GetMapping("/tree")
-//	public List<Menu> findMenuTree() {
-//		List<Menu> all = menuService.findAll();
-//		List<Menu> list = new ArrayList<>();
-//		setMenuTree(0L, all, list);
-//		return list;
-//	}
-//
-//	/**
-//	 * 菜单树
-//	 *
-//	 * @param parentId
-//	 * @param all
-//	 * @param list
-//	 */
-//	private void setMenuTree(Long parentId, List<Menu> all, List<Menu> list) {
-//		all.forEach(menu -> {
-//			if (parentId.equals(menu.getParentId())) {
-//				list.add(menu);
-//
-//				List<Menu> child = new ArrayList<>();
-//				menu.setChild(child);
-//				setMenuTree(menu.getId(), all, child);
-//			}
-//		});
-//	}
+	@GetMapping("/tree")
+	public List<Menu> findMenuTree() {
+		List<Menu> all = menuService.findAll();
+		List<Menu> list = new ArrayList<>();
+		setMenuTree(0L, all, list);
+		return list;
+	}
+
+	/**
+	 * 菜单树
+	 *
+	 * @param parentId
+	 * @param all
+	 * @param list
+	 */
+	private void setMenuTree(Long parentId, List<Menu> all, List<Menu> list) {
+		all.forEach(menu -> {
+			if (parentId.equals(menu.getParentId())) {
+				list.add(menu);
+
+				List<Menu> child = new ArrayList<>();
+				menu.setChild(child);
+				setMenuTree(menu.getId(), all, child);
+			}
+		});
+	}
 //
 //	/**
 //	 * 获取角色的菜单
@@ -128,79 +133,77 @@ public class MenuController {
 //		return menuService.findMenuIdsByRoleId(roleId);
 //	}
 //
-//	/**
-//	 * 添加菜单
-//	 *
-//	 * @param menu
-//	 */
+
+	@ApiOperation(value = "添加菜单", notes = "添加菜单", httpMethod = "POST")
 //	@LogAnnotation(module = "添加菜单")
 //	@PreAuthorize("hasAuthority('back:menu:save')")
-//	@PostMapping
-//	public Menu save(@RequestBody Menu menu) {
-//		menuService.save(menu);
-//
-//		return menu;
-//	}
-//
-//	/**
-//	 * 修改菜单
-//	 *
-//	 * @param menu
-//	 */
+	@PostMapping
+	public Menu save(@RequestBody @Valid MenuDto menuDto) {
+		Menu menu = Menu.builder().build();
+		BeanUtils.copyProperties(menuDto,menu);
+		menuService.save(menu);
+		return menu;
+	}
+
+	/**
+	 * 修改菜单
+	 *
+	 * @param menuDto
+	 */
+	@ApiOperation(value = "修改菜单", notes = "修改菜单", httpMethod = "PUT")
 //	@LogAnnotation(module = "修改菜单")
 //	@PreAuthorize("hasAuthority('back:menu:update')")
-//	@PutMapping
-//	public Menu update(@RequestBody Menu menu) {
-//		menuService.update(menu);
-//
-//		return menu;
-//	}
-//
-//	/**
-//	 * 删除菜单
-//	 *
-//	 * @param id
-//	 */
+	@PutMapping
+	public Menu update(@RequestBody @Valid MenuDto menuDto) {
+		if(Objects.isNull(menuDto.getId())){
+			ErrorBuilder.throwMsg("菜单id不能为空");
+		}
+		Menu menu = Menu.builder().build();
+		BeanUtils.copyProperties(menuDto, menu);
+		menuService.update(menu);
+		return menu;
+	}
+
+	@ApiOperation(value = "删除菜单", notes = "删除菜单", httpMethod = "DELETE")
 //	@LogAnnotation(module = "删除菜单")
 //	@PreAuthorize("hasAuthority('back:menu:delete')")
-//	@DeleteMapping("/{id}")
-//	public void delete(@PathVariable Long id) {
-//		menuService.delete(id);
-//	}
-//
-//	/**
-//	 * 查询所有菜单
-//	 */
+	@DeleteMapping("/{id}")
+	public void delete(@PathVariable Long id) {
+		menuService.deleteById(id);
+	}
+
+	@ApiOperation(value = "查询所有菜单", notes = "查询所有菜单", httpMethod = "GET")
 //	@PreAuthorize("hasAuthority('back:menu:query')")
-//	@GetMapping("/all")
-//	public List<Menu> findAll() {
-//		List<Menu> all = menuService.findAll();
-//		List<Menu> list = new ArrayList<>();
-//		setSortTable(0L, all, list);
-//
-//		return list;
-//	}
-//
-//	/**
-//	 * 菜单table
-//	 *
-//	 * @param parentId
-//	 * @param all
-//	 * @param list
-//	 */
-//	private void setSortTable(Long parentId, List<Menu> all, List<Menu> list) {
-//		all.forEach(a -> {
-//			if (a.getParentId().equals(parentId)) {
-//				list.add(a);
-//				setSortTable(a.getId(), all, list);
-//			}
-//		});
-//	}
-//
+	@GetMapping("/all")
+	public List<Menu> findAll() {
+		List<Menu> all = menuService.findAll();
+		List<Menu> list = new ArrayList<>();
+		setSortTable(0L, all, list);
+
+		return list;
+	}
+
+	/**
+	 * 菜单table
+	 *
+	 * @param parentId
+	 * @param all
+	 * @param list
+	 */
+	private void setSortTable(Long parentId, List<Menu> all, List<Menu> list) {
+		all.forEach(a -> {
+			if (a.getParentId().equals(parentId)) {
+				list.add(a);
+				setSortTable(a.getId(), all, list);
+			}
+		});
+	}
+
+	@ApiOperation(value = "根据id查询菜单", notes = "根据id查询菜单", httpMethod = "GET")
 //	@PreAuthorize("hasAuthority('back:menu:query')")
-//	@GetMapping("/{id}")
-//	public Menu findById(@PathVariable Long id) {
-//		return menuService.findById(id);
-//	}
+	@GetMapping("/{id}")
+	public Menu findById(@PathVariable Long id) {
+		return menuService.findById(id);
+	}
 
 }
