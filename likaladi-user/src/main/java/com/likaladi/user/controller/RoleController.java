@@ -1,9 +1,13 @@
 package com.likaladi.user.controller;
 
+import com.github.pagehelper.Page;
 import com.likaladi.error.ErrorBuilder;
+import com.likaladi.user.dto.RoleConditionDto;
 import com.likaladi.user.dto.RoleDto;
 import com.likaladi.user.dto.RolePermissionDto;
+import com.likaladi.user.entity.Permission;
 import com.likaladi.user.entity.Role;
+import com.likaladi.user.service.PermissionService;
 import com.likaladi.user.service.RolePermissionService;
 import com.likaladi.user.service.RoleService;
 import io.swagger.annotations.Api;
@@ -13,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Api(value = "菜单接口", description = "菜单接口")
 @RestController
@@ -27,6 +28,9 @@ public class RoleController {
 
 	@Autowired
 	private RolePermissionService rolePermissionService;
+
+	@Autowired
+	private PermissionService permissionService;
 
 	@ApiOperation(value = "管理后台添加角色", notes = "当前登录用户的菜单", httpMethod = "POST")
 //	@LogAnnotation(module = "添加角色")
@@ -73,33 +77,28 @@ public class RoleController {
 	public void setPermissionToRole(@RequestBody @Valid RolePermissionDto rolePermissionDto) {
 		rolePermissionService.setPermissionToRole(rolePermissionDto);
 	}
-//
-//	/**
-//	 * 获取角色的权限
-//	 *
-//	 * @param id
-//	 */
+
+
+	@ApiOperation(value = "获取角色的权限", notes = "获取角色的权限", httpMethod = "GET")
 //	@PreAuthorize("hasAnyAuthority('back:role:permission:set','role:permission:byroleid')")
-//	@GetMapping("/roles/{id}/permissions")
-//	public Set<SysPermission> findPermissionsByRoleId(@PathVariable Long id) {
-//		return sysRoleService.findPermissionsByRoleId(id);
-//	}
-//
+	@GetMapping("/roles/{id}/permissions")
+	public List<Permission> findPermissionsByRoleId(@PathVariable Long id) {
+		return permissionService.getPermission(id);
+	}
+
+	@ApiOperation(value = "根据id获取角色信息", notes = "根据id获取角色信息", httpMethod = "GET")
 //	@PreAuthorize("hasAuthority('back:role:query')")
-//	@GetMapping("/roles/{id}")
-//	public SysRole findById(@PathVariable Long id) {
-//		return sysRoleService.findById(id);
-//	}
-//
-//	/**
-//	 * 搜索角色
-//	 *
-//	 * @param params
-//	 */
+	@GetMapping("/roles/{id}")
+	public Role findById(@PathVariable Long id) {
+		return roleService.findById(id);
+	}
+
+
+	@ApiOperation(value = "分页查询角色", notes = "分页查询角色", httpMethod = "POST")
 //	@PreAuthorize("hasAuthority('back:role:query')")
-//	@GetMapping("/roles")
-//	public Page<SysRole> findRoles(@RequestParam Map<String, Object> params) {
-//		return sysRoleService.findRoles(params);
-//	}
+	@GetMapping("/roles")
+	public Page<Role> queryRolesByPage(@RequestBody RoleConditionDto roleConditionDto) {
+		return roleService.queryRolesByPage(roleConditionDto);
+	}
 
 }
