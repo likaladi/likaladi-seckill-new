@@ -121,18 +121,15 @@ public class MenuController {
 			}
 		});
 	}
-//
-//	/**
-//	 * 获取角色的菜单
-//	 *
-//	 * @param roleId
-//	 */
+
+
+	@ApiOperation(value = "获取角色的菜单ids", notes = "获取角色的菜单ids", httpMethod = "GET")
 //	@PreAuthorize("hasAnyAuthority('back:menu:set2role','menu:byroleid')")
-//	@GetMapping(params = "roleId")
-//	public Set<Long> findMenuIdsByRoleId(Long roleId) {
-//		return menuService.findMenuIdsByRoleId(roleId);
-//	}
-//
+	@GetMapping("/byRole/{roleId}")
+	public Set<Long> findMenuIdsByRoleId(@PathVariable Long roleId) {
+		return menuService.findMenuIdsByRoleId(roleId);
+	}
+
 
 	@ApiOperation(value = "添加菜单", notes = "添加菜单", httpMethod = "POST")
 //	@LogAnnotation(module = "添加菜单")

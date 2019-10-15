@@ -1,14 +1,19 @@
 package com.likaladi.base;
 
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.likaladi.common.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 @Slf4j
@@ -116,16 +121,23 @@ public class BaseServiceImpl<T> implements BaseService<T> {
     }
 
     @Override
-    public List<T> findByPage(int pageNum, int pageSize) {
+    public PageResult<T> findByPage(int pageNum, int pageSize) {
         PageHelper.startPage(pageNum,pageSize);
-        return commonMapper.selectAll();
+
+        Page<T> page = (Page<T>) commonMapper.selectAll();
+
+        return getPageResult(page);
     }
 
     @Override
-    public List<T> findByPage(int pageNum, int pageSize, T entity) {
+    public PageResult<T> findByPage(int pageNum, int pageSize, T entity) {
         PageHelper.startPage(pageNum,pageSize);
-        return commonMapper.select(entity);
+
+        Page<T> page = (Page<T>) commonMapper.select(entity);
+
+        return getPageResult(page);
     }
+
 
     @Override
     public void update(T t) {
@@ -139,6 +151,43 @@ public class BaseServiceImpl<T> implements BaseService<T> {
         if(commonMapper.updateByPrimaryKeySelective(t) == 0){
             ErrorBuilder.throwMsg("更新失败");
         }
+    }
+
+    public Integer getPage(Map<String, Object> params){
+        try{
+            if(!Objects.isNull(params.get("page"))){
+                return (Integer) params.get("page");
+            }
+        }catch (Exception e){
+
+        }
+        return 1;
+    }
+
+    public Integer getRows(Map<String, Object> params){
+        try{
+            if(!Objects.isNull(params.get("rows"))){
+                return (Integer) params.get("rows");
+            }
+        }catch (Exception e){
+
+        }
+        return 10;
+    }
+
+    public PageResult<T> getPageResult(Page<T> page){
+
+        List<T> items = page.getResult();
+
+        long total = page.getTotal();
+
+        long totalPage = 0;
+
+        if (!CollectionUtils.isEmpty(items)) {
+            totalPage = total % items.size() == 0 ? total / items.size() : total / items.size() + 1;
+        }
+
+        return new PageResult<T>(page.getTotal(), page.getResult(), totalPage);
     }
 
 }

@@ -9,9 +9,13 @@ import lombok.Data;
 @Table(name = "sys_role")
 public class Role extends BaseEntity {
 
-    @Column(name = "role_name")
-    private String roleName;
+    /**
+     * 角色code
+     */
+    private String code;
 
-    @Column(name = "role_desc")
-    private String roleDesc;
+    /**
+     * 角色名
+     */
+    private String name;
 }

@@ -1,6 +1,7 @@
 package com.likaladi.user.controller;
 
 import com.github.pagehelper.Page;
+import com.likaladi.common.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.user.dto.RoleConditionDto;
 import com.likaladi.user.dto.RoleDto;
@@ -94,11 +95,11 @@ public class RoleController {
 	}
 
 
-	@ApiOperation(value = "分页查询角色", notes = "分页查询角色", httpMethod = "POST")
+	@ApiOperation(value = "分页查询角色", notes = "分页查询角色", httpMethod = "GET")
 //	@PreAuthorize("hasAuthority('back:role:query')")
 	@GetMapping("/roles")
-	public Page<Role> queryRolesByPage(@RequestBody RoleConditionDto roleConditionDto) {
-		return roleService.queryRolesByPage(roleConditionDto);
+	public PageResult<Role> queryRolesByPage(@RequestParam Map<String, Object> params) {
+		return roleService.queryRolesByPage(params);
 	}
 
 }

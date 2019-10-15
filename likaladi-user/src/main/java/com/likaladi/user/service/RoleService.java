@@ -1,9 +1,10 @@
 package com.likaladi.user.service;
 
-import com.github.pagehelper.Page;
 import com.likaladi.base.BaseService;
-import com.likaladi.user.dto.RoleConditionDto;
+import com.likaladi.common.PageResult;
 import com.likaladi.user.entity.Role;
+
+import java.util.Map;
 
 /**
  * @author liwen
@@ -12,9 +13,9 @@ import com.likaladi.user.entity.Role;
 public interface RoleService extends BaseService<Role> {
 
     /**
-     * 分页查询角色
-     * @param conditionDto
+     * 分页查询角色列表
+     * @param params 查询条件
      * @return
      */
-    Page<Role> queryRolesByPage(RoleConditionDto conditionDto);
+    PageResult<Role> queryRolesByPage(Map<String, Object> params);
 }

@@ -1,5 +1,7 @@
 package com.likaladi.base;
 
+import com.likaladi.common.PageResult;
+
 import java.util.List;
 
 public interface BaseService<T> {
@@ -67,7 +69,7 @@ public interface BaseService<T> {
      * @param pageSize
      * @return
      */
-    List<T> findByPage(int pageNum, int pageSize);
+    PageResult<T> findByPage(int pageNum, int pageSize);
 
     /**
      * 根据条件分页查询对象列表
@@ -76,7 +78,7 @@ public interface BaseService<T> {
      * @param entity
      * @return
      */
-    List<T> findByPage(int pageNum, int pageSize, T entity);
+    PageResult<T> findByPage(int pageNum, int pageSize, T entity);
 
     /**
      * 更新对象信息
