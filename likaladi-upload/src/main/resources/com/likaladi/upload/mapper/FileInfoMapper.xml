@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.likaladi.upload.mapper.FileInfoMapper">
+  <resultMap id="BaseResultMap" type="com.likaladi.upload.entity.FileInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="isImg" jdbcType="BIT" property="isimg" />
+    <result column="content_type" jdbcType="VARCHAR" property="contentType" />
+    <result column="size" jdbcType="INTEGER" property="size" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+</mapper>
