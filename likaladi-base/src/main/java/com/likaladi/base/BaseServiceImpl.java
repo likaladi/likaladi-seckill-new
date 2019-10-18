@@ -22,7 +22,8 @@ public class BaseServiceImpl<T> implements BaseService<T> {
     @Autowired
     private CommonMapper<T> commonMapper;
 
-    private Class<T> modelClass; // 当前泛型真实类型的Class
+    /** 当前泛型真实类型的Class */
+    private Class<T> modelClass;
 
     public BaseServiceImpl() {
         // 获得具体model，通过反射来根据属性条件查找数据

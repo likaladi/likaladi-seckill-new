@@ -11,6 +11,7 @@ public class FileInfo implements Serializable {
     /**
      * 文件md5
      */
+    @Id
     @GeneratedValue(generator = "JDBC")
     private String id;
 

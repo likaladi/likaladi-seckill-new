@@ -4,7 +4,7 @@ import com.likaladi.base.BaseService;
 import com.likaladi.upload.entity.FileInfo;
 import org.springframework.web.multipart.MultipartFile;
 
-public interface FileService extends BaseService<FileInfo> {
+public interface FileService {
 
     /**
      * 上传文件

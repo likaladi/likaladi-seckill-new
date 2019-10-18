@@ -32,3 +32,9 @@ spring:
             - Path=/managerApi/**
           filters:
             - StripPrefix=1
+        - id: likaladi-upload
+          uri: lb://likaladi-upload
+          predicates:
+            - Path=/uploadApi/**
+          filters:
+            - StripPrefix=1

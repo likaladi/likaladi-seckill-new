@@ -3,8 +3,10 @@ package com.likaladi.upload.service;
 import com.likaladi.base.BaseServiceImpl;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.upload.entity.FileInfo;
+import com.likaladi.upload.mapper.FileInfoMapper;
 import com.likaladi.upload.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Objects;
@@ -13,7 +15,10 @@ import java.util.Objects;
  * 实现文件上传
  */
 @Slf4j
-public abstract class AbstractFileService extends BaseServiceImpl<FileInfo> implements FileService{
+public abstract class AbstractFileService  implements FileService{
+
+    @Autowired
+    private FileInfoMapper fileInfoMapper;
 
     @Override
     public FileInfo uploadFile(MultipartFile file) throws Exception {
@@ -21,7 +26,7 @@ public abstract class AbstractFileService extends BaseServiceImpl<FileInfo> impl
         FileInfo fileInfo = FileUtil.getFileInfo(file);
 
         /** 先根据文件md5查询记录 */
-        FileInfo oldFileInfo = this.findById(fileInfo.getId());
+        FileInfo oldFileInfo = fileInfoMapper.selectByPrimaryKey(fileInfo.getId());
 
         /** 如果已存在文件，避免重复上传同一个文件 */
         if(!Objects.isNull(oldFileInfo)){
@@ -38,7 +43,7 @@ public abstract class AbstractFileService extends BaseServiceImpl<FileInfo> impl
         uploadOperate(file, fileInfo);
 
         /** 将文件信息保存到数据库 */
-        this.save(fileInfo);
+        fileInfoMapper.insertSelective(fileInfo);
 
         log.info("上传文件：{}", fileInfo);
 
