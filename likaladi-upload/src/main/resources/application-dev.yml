@@ -37,9 +37,9 @@ file:
     #配置阿里云bucket
     bucketName: likaladi
     #配置EndPoint（地域节点）
-    endpoint: *
+    endpoint: oss-cn-beijing.aliyuncs.com
     accessKeyId: *
-    accessKeySecret: yUesjanTyZjclzj4aQW8GaxAg0XB1Z
+    accessKeySecret: *
     #配置OSS上传文件目录
     catalog: seckill
     #配置阿里云Bucket 文件存储地址
