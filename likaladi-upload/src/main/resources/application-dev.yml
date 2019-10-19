@@ -3,7 +3,7 @@ spring:
     # 服务名称尽量用-，不要用_，不要用特殊字符
     name: likaladi-upload
   datasource:
-    url: jdbc:mysql://localhost:3306/likaladi-seckill-base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://localhost:3306/likaladi-scekill-base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&zeroDateTimeBehavior=convertToNull
     hikari:
       username: root
       password: 123456
@@ -13,7 +13,7 @@ spring:
       discovery:
         # 指定nacos server的地址
 #        server-addr: 192.168.0.186:8848
-        server-addr: 192.168.0.115:8848
+        server-addr: 192.168.149.1:8848
   #        # 指定namespace（隔离环境:pre,dev等）
   #        namespace: 56116141-d837-4d15-8842-94e153bb6cfb
   #        # 指定集群名称（可以优先地域访问：比如说北京和南京部署了同一集群名称，北京地区的优先访问,如果北京服务宕机，才会访问南京的服务）
@@ -36,10 +36,12 @@ file:
   aliyun:
     #配置阿里云bucket
     bucketName: likaladi
-    #配置阿里云Bucket 域名
-    domain: https://likaladi.oss-cn-beijing.aliyuncs.com/seckill/
     #配置EndPoint（地域节点）
-    endpoint: oss-cn-beijing.aliyuncs.com
-    accessKeyId: LTAI7X5ekSs8LDkx
+    endpoint: *
+    accessKeyId: *
     accessKeySecret: yUesjanTyZjclzj4aQW8GaxAg0XB1Z
+    #配置OSS上传文件目录
+    catalog: seckill
+    #配置阿里云Bucket 文件存储地址
+    domain: https://likaladi.oss-cn-beijing.aliyuncs.com/seckill
 

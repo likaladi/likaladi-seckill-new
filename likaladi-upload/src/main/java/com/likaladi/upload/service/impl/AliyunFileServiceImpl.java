@@ -26,6 +26,12 @@ public class AliyunFileServiceImpl extends AbstractFileService {
     private String bucketName;
 
     /**
+     * 配置OSS上传文件目录
+     */
+    @Value("${file.aliyun.catalog}")
+    private String catalog;
+
+    /**
      * Bucket 域名
      */
     @Value("${file.aliyun.domain}")
@@ -38,7 +44,7 @@ public class AliyunFileServiceImpl extends AbstractFileService {
 
     @Override
     public void uploadOperate(MultipartFile file, FileInfo fileInfo) throws Exception{
-        ossClient.putObject(bucketName, fileInfo.getName(), file.getInputStream());
+        ossClient.putObject(bucketName, catalog+"/"+ fileInfo.getName(), file.getInputStream());
         fileInfo.setUrl(domain + "/" + fileInfo.getName());
     }
 }

@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 阿里云配置
- * 
+ * 阿里云OSS配置
+ *
  * @author liwen
  *
  */
@@ -23,7 +23,7 @@ public class AliyunConfig {
 
 	/**
 	 * 阿里云文件存储client
-	 * 
+	 *
 	 */
 	@Bean
 	public OSSClient ossClient() {
