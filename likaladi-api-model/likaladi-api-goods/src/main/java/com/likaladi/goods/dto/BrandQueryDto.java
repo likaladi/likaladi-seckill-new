@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * @author likaladi
+ */
 @Data
 @ApiModel(value = "品牌查询入参")
 public class BrandQueryDto extends BasePage {

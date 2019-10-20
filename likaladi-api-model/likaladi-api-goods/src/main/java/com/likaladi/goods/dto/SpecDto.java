@@ -9,6 +9,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+/**
+ * @author likaladi
+ */
 @Data
 @ApiModel(value = "规格属性添加编辑入参")
 public class SpecDto {

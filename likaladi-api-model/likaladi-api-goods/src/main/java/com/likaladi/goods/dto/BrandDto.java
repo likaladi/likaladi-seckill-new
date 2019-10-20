@@ -8,6 +8,9 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+/**
+ * @author likaladi
+ */
 @Data
 @ApiModel(value = "品牌添加编辑入参")
 public class BrandDto {
