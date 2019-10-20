@@ -45,7 +45,7 @@ public class AliyunFileServiceImpl extends AbstractFileService {
     @Override
     public void uploadOperate(MultipartFile file, FileInfo fileInfo) throws Exception{
         ossClient.putObject(bucketName, catalog+"/"+ fileInfo.getName(), file.getInputStream());
-        fileInfo.setUrl(domain + "/" + fileInfo.getName());
+        fileInfo.setUrl(domain + "/"+catalog+"/" + fileInfo.getName());
     }
 
     @Override
