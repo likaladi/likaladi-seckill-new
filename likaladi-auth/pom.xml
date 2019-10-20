@@ -15,12 +15,6 @@
 
 		<dependency>
 			<groupId>com.likaladi</groupId>
-			<artifactId>likaladi-base</artifactId>
-			<version>${item.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.likaladi</groupId>
 			<artifactId>likaladi-api-user</artifactId>
 			<version>${item.version}</version>
 		</dependency>
@@ -30,7 +24,7 @@
 			<artifactId>spring-security-crypto</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<!-- JWT-->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -50,7 +44,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-        
+
     </dependencies>
 
 </project>

@@ -1,4 +1,4 @@
-package com.likaladi.common;
+package com.likaladi.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

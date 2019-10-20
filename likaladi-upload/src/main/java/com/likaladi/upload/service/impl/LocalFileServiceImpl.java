@@ -53,4 +53,9 @@ public class LocalFileServiceImpl extends AbstractFileService {
 
         FileUtil.saveFile(file, path);
     }
+
+    @Override
+    public boolean deleteFile(FileInfo fileInfo) {
+        return FileUtil.deleteFile(fileInfo.getPath());
+    }
 }

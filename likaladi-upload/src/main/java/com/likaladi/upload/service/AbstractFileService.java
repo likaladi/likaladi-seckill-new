@@ -50,6 +50,13 @@ public abstract class AbstractFileService  implements FileService{
         return fileInfo;
     }
 
+    @Override
+    public void delete(FileInfo fileInfo) {
+        deleteFile(fileInfo);
+        fileInfoMapper.deleteByPrimaryKey(fileInfo.getId());
+        log.info("删除文件：{}", fileInfo);
+    }
+
     /**
      * 子类设置文件来源 : 本地/阿里云
      * @return
@@ -62,5 +69,10 @@ public abstract class AbstractFileService  implements FileService{
      */
     public abstract void uploadOperate(MultipartFile file, FileInfo fileInfo) throws Exception;
 
+    /**
+     * 删除文件
+     * @param fileInfo
+     */
+    public abstract boolean deleteFile(FileInfo fileInfo);
 
 }

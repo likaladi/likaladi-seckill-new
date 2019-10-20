@@ -1,7 +1,5 @@
 package com.likaladi.base;
 
-import com.likaladi.common.PageResult;
-
 import java.util.List;
 
 public interface BaseService<T> {
@@ -24,12 +22,14 @@ public interface BaseService<T> {
      */
     void deleteById(Object id);
 
+
     /**
-     * 根据ids删除多条对象
-     * 批量刪除 eg：ids -> “1,2,3,4”
+     * 根据ids集合删除对象
      * @param ids
      */
-    void deleteByIds(String ids);
+    void deleteByIdList(List ids);
+
+    void deleteByCondition(T t);
 
     /**
      * 根据id查询对象
@@ -51,11 +51,11 @@ public interface BaseService<T> {
     List<T> findListBy(List<String> fieldNames, List<Object> values);
 
     /**
-     * 通过多个ID查找//eg：ids -> “1,2,3,4”
+     * 根据多个ids查询对象列表
      * @param ids
      * @return
      */
-    List<T> findByIds(String ids);
+    List<T> findByIds(List ids);
 
     /**
      * 获取所有对象
@@ -63,30 +63,12 @@ public interface BaseService<T> {
      */
     List<T> findAll();//获取所有
 
-    /**
-     * 分页查询对象列表
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    PageResult<T> findByPage(int pageNum, int pageSize);
-
-    /**
-     * 根据条件分页查询对象列表
-     * @param pageNum
-     * @param pageSize
-     * @param entity
-     * @return
-     */
-    PageResult<T> findByPage(int pageNum, int pageSize, T entity);
 
     /**
      * 更新对象信息
      * @param t
      */
     void update(T t);
-
-    void updateSelect(T t);
 
 
 }

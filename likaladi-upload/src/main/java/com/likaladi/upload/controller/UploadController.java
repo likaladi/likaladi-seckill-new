@@ -2,6 +2,7 @@ package com.likaladi.upload.controller;
 
 import com.likaladi.upload.config.FileStrategyFactory;
 import com.likaladi.upload.entity.FileInfo;
+import com.likaladi.upload.service.FileInfoService;
 import com.likaladi.upload.service.FileService;
 import com.likaladi.user.dto.LoginDto;
 import io.swagger.annotations.Api;
@@ -19,6 +20,8 @@ import javax.validation.Valid;
 @RequestMapping("upload")
 public class UploadController {
 
+    @Autowired
+    private FileInfoService fileInfoService;
 
     /**
      * 文件上传<br>
@@ -34,6 +37,20 @@ public class UploadController {
         FileService fileService = FileStrategyFactory.getFileService(fileSource);
 
         return fileService.uploadFile(file);
+    }
+
+    /**
+     * 文件删除
+     *
+     * @param id
+     */
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        FileInfo fileInfo = fileInfoService.findById(id);
+        if (fileInfo != null) {
+            FileService fileService = FileStrategyFactory.getFileService(fileInfo.getSource());
+            fileService.delete(fileInfo);
+        }
     }
 
 }

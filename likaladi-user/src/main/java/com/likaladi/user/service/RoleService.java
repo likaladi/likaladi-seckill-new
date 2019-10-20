@@ -1,7 +1,7 @@
 package com.likaladi.user.service;
 
 import com.likaladi.base.BaseService;
-import com.likaladi.common.PageResult;
+import com.likaladi.base.PageResult;
 import com.likaladi.user.entity.Role;
 
 import java.util.Map;

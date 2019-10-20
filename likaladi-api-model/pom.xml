@@ -5,6 +5,7 @@
 	<packaging>pom</packaging>
 	<modules>
         <module>likaladi-api-user</module>
+		<module>likaladi-api-goods</module>
     </modules>
 
 	<parent>
@@ -20,17 +21,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- swagger配置-->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox-swagger.version}</version>
+            <groupId>com.likaladi</groupId>
+            <artifactId>likaladi-base</artifactId>
+            <version>${item.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox-swagger.version}</version>
-        </dependency>
+
     </dependencies>
 
 </project>

@@ -47,4 +47,10 @@ public class AliyunFileServiceImpl extends AbstractFileService {
         ossClient.putObject(bucketName, catalog+"/"+ fileInfo.getName(), file.getInputStream());
         fileInfo.setUrl(domain + "/" + fileInfo.getName());
     }
+
+    @Override
+    public boolean deleteFile(FileInfo fileInfo) {
+        ossClient.deleteObject(bucketName, catalog+"/"+fileInfo.getName());
+        return true;
+    }
 }

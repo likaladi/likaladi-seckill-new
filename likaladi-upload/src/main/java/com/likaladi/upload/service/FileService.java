@@ -14,4 +14,11 @@ public interface FileService {
      * @throws Exception
      */
     FileInfo uploadFile(MultipartFile file) throws Exception;
+
+    /**
+     * 删除文件
+     *
+     * @param fileInfo
+     */
+    void delete(FileInfo fileInfo);
 }

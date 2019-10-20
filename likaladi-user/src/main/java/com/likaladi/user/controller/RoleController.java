@@ -1,7 +1,6 @@
 package com.likaladi.user.controller;
 
-import com.github.pagehelper.Page;
-import com.likaladi.common.PageResult;
+import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.user.dto.RoleDto;
 import com.likaladi.user.dto.RolePermissionDto;

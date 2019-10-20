@@ -1,14 +1,11 @@
 package com.likaladi.base;
 
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.likaladi.common.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -52,10 +49,18 @@ public class BaseServiceImpl<T> implements BaseService<T> {
         }
     }
 
+
     @Override
-    public void deleteByIds(String ids) {
-        if(commonMapper.deleteByIds(ids) == 0){
+    public void deleteByIdList(List ids) {
+        if(commonMapper.deleteByIdList(ids) == 0){
             ErrorBuilder.throwMsg("批量删除失败");
+        }
+    }
+
+    @Override
+    public void deleteByCondition(T t) {
+        if(commonMapper.delete(t) <= 0){
+            ErrorBuilder.throwMsg("删除失败");
         }
     }
 
@@ -112,8 +117,8 @@ public class BaseServiceImpl<T> implements BaseService<T> {
     }
 
     @Override
-    public List<T> findByIds(String ids) {
-        return commonMapper.selectByIds(ids);
+    public List<T> findByIds(List ids) {
+        return commonMapper.selectByIdList(ids);
     }
 
     @Override
@@ -121,34 +126,9 @@ public class BaseServiceImpl<T> implements BaseService<T> {
         return commonMapper.selectAll();
     }
 
-    @Override
-    public PageResult<T> findByPage(int pageNum, int pageSize) {
-        PageHelper.startPage(pageNum,pageSize);
-
-        Page<T> page = (Page<T>) commonMapper.selectAll();
-
-        return getPageResult(page);
-    }
-
-    @Override
-    public PageResult<T> findByPage(int pageNum, int pageSize, T entity) {
-        PageHelper.startPage(pageNum,pageSize);
-
-        Page<T> page = (Page<T>) commonMapper.select(entity);
-
-        return getPageResult(page);
-    }
-
 
     @Override
     public void update(T t) {
-        if(commonMapper.updateByPrimaryKeySelective(t) == 0){
-            ErrorBuilder.throwMsg("更新失败");
-        }
-    }
-
-    @Override
-    public void updateSelect(T t) {
         if(commonMapper.updateByPrimaryKeySelective(t) == 0){
             ErrorBuilder.throwMsg("更新失败");
         }
@@ -174,21 +154,6 @@ public class BaseServiceImpl<T> implements BaseService<T> {
 
         }
         return 10;
-    }
-
-    public PageResult<T> getPageResult(Page<T> page){
-
-        List<T> items = page.getResult();
-
-        long total = page.getTotal();
-
-        long totalPage = 0;
-
-        if (!CollectionUtils.isEmpty(items)) {
-            totalPage = total % items.size() == 0 ? total / items.size() : total / items.size() + 1;
-        }
-
-        return new PageResult<T>(page.getTotal(), page.getResult(), totalPage);
     }
 
 }

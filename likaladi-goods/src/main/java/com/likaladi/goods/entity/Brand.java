@@ -2,17 +2,23 @@ package com.likaladi.goods.entity;
 
 import javax.persistence.*;
 
+import com.likaladi.base.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "brand")
 public class Brand implements Serializable {
 
-    @GeneratedValue(generator = "JDBC")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**

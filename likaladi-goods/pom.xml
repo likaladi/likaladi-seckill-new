@@ -18,9 +18,21 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>com.likaladi</groupId>-->
+            <!--<artifactId>likaladi-auth</artifactId>-->
+            <!--<version>${item.version}</version>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>com.likaladi</groupId>
-            <artifactId>likaladi-auth</artifactId>
+            <artifactId>likaladi-base</artifactId>
+            <version>${item.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.likaladi</groupId>
+            <artifactId>likaladi-api-goods</artifactId>
             <version>${item.version}</version>
         </dependency>
 
