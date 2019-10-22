@@ -5,9 +5,12 @@ import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.goods.dto.SpecDto;
 import com.likaladi.goods.dto.SpecQueryDto;
+import com.likaladi.goods.dto.SpuDto;
 import com.likaladi.goods.entity.Specification;
 import com.likaladi.goods.service.SpecService;
+import com.likaladi.goods.service.SpuService;
 import com.likaladi.goods.vo.SpecVo;
+import com.likaladi.goods.vo.SpuVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -26,45 +29,42 @@ import java.util.Objects;
 public class SpuController {
 
     @Autowired
-    private SpecService specService;
+    private SpuService spuService;
 
     @ApiOperation(value = "添加商品", notes = "添加商品")
     @PostMapping
-    public void save(@RequestBody @Valid SpecDto specDto) {
-        Specification specification = new Specification();
-        BeanUtils.copyProperties(specDto, specification);
-        specification.setOptions(JSONObject.toJSONString(specDto.getDatas()));
-        specService.save(specification);
+    public void save(@RequestBody @Valid SpuDto spuDto) {
+        spuService.saveSpuSku(spuDto);
     }
 
-    @ApiOperation(value = "删除规格属性", notes = "删除规格属性")
+    @ApiOperation(value = "删除商品", notes = "删除商品")
     @DeleteMapping
     public void deleteByIds(@RequestBody List<Long> ids) {
-        specService.deleteByIdList(ids);
+        spuService.deleteSpuSKu(ids);
     }
 
-    @ApiOperation(value = "查询id规格属性", notes = "查询id规格属性")
+    @ApiOperation(value = "根据id查询商品", notes = "根据id查询商品")
     @GetMapping("/{id}")
-    public SpecVo queryById(@PathVariable Long id) {
-        return specService.queryById(id);
+    public SpuVo queryById(@PathVariable Long id) {
+        return spuService.querySpuSkuById(id);
     }
 
-    @ApiOperation(value="分页查询规格属性", notes="分页查询规格属性")
-    @PostMapping("/listByPage")
-    public PageResult<SpecVo> listByPPage(@RequestBody @Valid SpecQueryDto specQueryDto) {
-        return specService.listByPPage(specQueryDto);
-    }
-
-    @ApiOperation(value = "编辑规格属性", notes = "编辑规格属性")
-    @PutMapping
-    public void update(@RequestBody @Valid SpecDto specDto) {
-        if(Objects.isNull(specDto.getId())){
-            ErrorBuilder.throwMsg("id不能为空");
-        }
-        Specification specification = new Specification();
-        BeanUtils.copyProperties(specDto, specification);
-        specification.setOptions(JSONObject.toJSONString(specDto.getDatas()));
-        specService.update(specification);
-    }
+//    @ApiOperation(value="分页查询规格属性", notes="分页查询规格属性")
+//    @PostMapping("/listByPage")
+//    public PageResult<SpecVo> listByPPage(@RequestBody @Valid SpecQueryDto specQueryDto) {
+//        return specService.listByPPage(specQueryDto);
+//    }
+//
+//    @ApiOperation(value = "编辑规格属性", notes = "编辑规格属性")
+//    @PutMapping
+//    public void update(@RequestBody @Valid SpecDto specDto) {
+//        if(Objects.isNull(specDto.getId())){
+//            ErrorBuilder.throwMsg("id不能为空");
+//        }
+//        Specification specification = new Specification();
+//        BeanUtils.copyProperties(specDto, specification);
+//        specification.setOptions(JSONObject.toJSONString(specDto.getDatas()));
+//        specService.update(specification);
+//    }
 
 }

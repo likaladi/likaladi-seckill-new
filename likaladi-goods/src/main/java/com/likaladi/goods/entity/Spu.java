@@ -1,6 +1,8 @@
 package com.likaladi.goods.entity;
 
 import com.likaladi.base.BaseEntity;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 import lombok.Data;
@@ -36,6 +38,18 @@ public class Spu extends BaseEntity {
      */
     @Column(name = "image")
     private String image;
+
+    /**
+     * 最低销售价
+     */
+    @Column(name = "min_price")
+    private BigDecimal minPrice;
+
+    /**
+     * 最高销售价
+     */
+    @Column(name = "max_price")
+    private BigDecimal maxPrice;
 
     /**
      * 1级类目id

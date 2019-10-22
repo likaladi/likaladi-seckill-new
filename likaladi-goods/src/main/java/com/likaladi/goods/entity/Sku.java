@@ -22,11 +22,6 @@ public class Sku extends BaseEntity {
     private Long spuId;
 
     /**
-     * 商品标题
-     */
-    private String title;
-
-    /**
      * 商品的图片，json数字存储
      */
     private String images;

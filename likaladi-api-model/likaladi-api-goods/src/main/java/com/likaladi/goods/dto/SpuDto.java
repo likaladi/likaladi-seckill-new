@@ -10,7 +10,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-
+/**
+ * @author likaladi
+ */
 @Data
 @ApiModel(value = "商品添加编辑入参")
 public class SpuDto {
@@ -52,10 +54,15 @@ public class SpuDto {
     private String description;
 
     @Valid
+    @ApiModelProperty(value = "通用属性")
+    @NotEmpty(message = "通用属性不能为空")
+    private List<SpuAttrDto> attrs;
+
     @ApiModelProperty(value = "规格属性")
-    @NotEmpty(message = "规格属性不能为空")
     private List<SpuSpecDto> specs;
 
-
-
+    @Valid
+    @ApiModelProperty(value = "sku值")
+    @NotEmpty(message = "sku不能为空")
+    private List<SpuSkuDto> skus;
 }

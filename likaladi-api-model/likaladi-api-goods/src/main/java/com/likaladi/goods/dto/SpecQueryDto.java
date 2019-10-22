@@ -7,6 +7,9 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * @author likaladi
+ */
 @Data
 @ApiModel(value = "品牌查询入参")
 public class SpecQueryDto extends BasePage {
