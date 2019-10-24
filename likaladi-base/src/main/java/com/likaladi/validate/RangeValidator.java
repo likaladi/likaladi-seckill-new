@@ -35,8 +35,9 @@ public class RangeValidator implements ConstraintValidator<Range, Object>{
     @Override
     public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
 
+        /** 空值不校验 */
         if(Objects.isNull(o)){
-            return false;
+            return true;
         }
 
         boolean temp = false;

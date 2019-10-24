@@ -61,6 +61,7 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
     public CategorySpecAttrVo listByCategoryId(Long categoryId) {
         List<Specification> specifications = this.findListBy("categoryId", categoryId);
 
+        /** 将specifications 过滤出通用属性 转成对应的 categoryAttrVos */
         List<CategoryAttrVo> categoryAttrVos = specifications.stream()
                 .filter(specification -> specification.getIsGloab())
                 .map(specification -> {
@@ -70,6 +71,7 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
                     return categoryAttrVo;
                 }).collect(Collectors.toList());
 
+        /** 将specifications 过滤出拓展属性 转成对应的 categorySpecVos */
         List<CategorySpecVo> categorySpecVos = specifications.stream()
                 .filter(specification -> !specification.getIsGloab())
                 .map(specification -> {

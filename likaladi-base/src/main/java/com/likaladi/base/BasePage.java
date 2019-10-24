@@ -1,6 +1,5 @@
 package com.likaladi.base;
 
-import com.likaladi.enums.SortEnum;
 import com.likaladi.validate.Range;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

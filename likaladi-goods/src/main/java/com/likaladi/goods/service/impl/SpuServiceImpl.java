@@ -1,14 +1,20 @@
 package com.likaladi.goods.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.likaladi.base.BaseServiceImpl;
+import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.goods.dto.SpuDto;
+import com.likaladi.goods.dto.SpuQueryDto;
 import com.likaladi.goods.dto.SpuSkuDto;
+import com.likaladi.goods.entity.Category;
 import com.likaladi.goods.entity.Sku;
 import com.likaladi.goods.entity.Spu;
 import com.likaladi.goods.entity.SpuDetail;
 import com.likaladi.goods.mapper.SpuMapper;
+import com.likaladi.goods.service.CategoryService;
 import com.likaladi.goods.service.SkuService;
 import com.likaladi.goods.service.SpuDetailService;
 import com.likaladi.goods.service.SpuService;
@@ -19,8 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +43,9 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
 
     @Autowired
     private SkuService skuService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -87,8 +96,32 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
 
     @Override
     public SpuVo querySpuSkuById(Long id) {
-        Spu spu = this.findById(id);
-        SpuDetail spuDetail = spuDetailService.findById(id);
-        return null;
+        SpuVo spuVo = spuMapper.querySpuInfo(id);
+        if(Objects.isNull(spuVo)){
+            ErrorBuilder.throwMsg("不存在匹配的记录");
+        }
+        List<Long> categoryIds = Arrays.asList();
+        categoryIds.add(spuVo.getCid1());
+        categoryIds.add(spuVo.getCid2());
+        categoryIds.add(spuVo.getCid3());
+        List<Category> categories = categoryService.findByIds(categoryIds);
+
+        /** 将categories集合 转成对应的categoryMap：id -> Category  */
+        Map<Long, Category> categoryMap = categories.stream().collect(Collectors.toMap(Category::getId, Function.identity()));
+
+        spuVo.setCategoryName1(categoryMap.get(spuVo.getCid1()).getName());
+        spuVo.setCategoryName1(categoryMap.get(spuVo.getCid2()).getName());
+        spuVo.setCategoryName1(categoryMap.get(spuVo.getCid3()).getName());
+        return spuVo;
+    }
+
+    @Override
+    public PageResult<SpuVo> listByPPage(SpuQueryDto spuQueryDto) {
+
+        PageHelper.startPage(spuQueryDto.getPage(),spuQueryDto.getRows());
+
+        Page<SpuVo> page = (Page<SpuVo>) spuMapper.selectByPage(spuQueryDto);
+
+        return new PageResult<>(page.getTotal(), page.getResult(), null);
     }
 }
