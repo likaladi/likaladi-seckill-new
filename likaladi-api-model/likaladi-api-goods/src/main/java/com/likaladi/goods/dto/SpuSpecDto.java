@@ -12,7 +12,7 @@ import java.util.List;
  * @author likaladi
  */
 @Data
-@ApiModel(value = "特殊规格")
+@ApiModel(value = "规格")
 public class SpuSpecDto {
 
     @ApiModelProperty(value = "规格键")

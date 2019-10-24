@@ -13,13 +13,14 @@ import com.likaladi.goods.enums.SpecTypEnum;
 import com.likaladi.goods.mapper.SpecificationMapper;
 import com.likaladi.goods.service.CategoryService;
 import com.likaladi.goods.service.SpecService;
-import com.likaladi.goods.vo.BrandVo;
-import com.likaladi.goods.vo.SpecVo;
+import com.likaladi.goods.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author liwen
@@ -54,5 +55,33 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
         });
 
         return new PageResult<>(page.getTotal(), page.getResult(), null);
+    }
+
+    @Override
+    public CategorySpecAttrVo listByCategoryId(Long categoryId) {
+        List<Specification> specifications = this.findListBy("categoryId", categoryId);
+
+        List<CategoryAttrVo> categoryAttrVos = specifications.stream()
+                .filter(specification -> specification.getIsGloab())
+                .map(specification -> {
+                    CategoryAttrVo categoryAttrVo = new CategoryAttrVo();
+                    BeanUtils.copyProperties(specification, categoryAttrVo);
+                    categoryAttrVo.setDatas(JSONObject.parseArray(specification.getOptions(), String.class));
+                    return categoryAttrVo;
+                }).collect(Collectors.toList());
+
+        List<CategorySpecVo> categorySpecVos = specifications.stream()
+                .filter(specification -> !specification.getIsGloab())
+                .map(specification -> {
+                    CategorySpecVo categorySpecVo = new CategorySpecVo();
+                    BeanUtils.copyProperties(specification, categorySpecVo);
+                    categorySpecVo.setValue(JSONObject.parseArray(specification.getOptions(), String.class));
+                    return categorySpecVo;
+                }).collect(Collectors.toList());
+
+        return CategorySpecAttrVo.builder()
+                .attrs(categoryAttrVos)
+                .specs(categorySpecVos)
+                .build();
     }
 }

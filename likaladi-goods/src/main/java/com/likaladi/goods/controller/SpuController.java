@@ -48,11 +48,11 @@ public class SpuController {
     public SpuVo queryById(@PathVariable Long id) {
         return spuService.querySpuSkuById(id);
     }
-
+//
 //    @ApiOperation(value="分页查询规格属性", notes="分页查询规格属性")
 //    @PostMapping("/listByPage")
 //    public PageResult<SpecVo> listByPPage(@RequestBody @Valid SpecQueryDto specQueryDto) {
-//        return specService.listByPPage(specQueryDto);
+//        return spuService.listByPPage(specQueryDto);
 //    }
 //
 //    @ApiOperation(value = "编辑规格属性", notes = "编辑规格属性")

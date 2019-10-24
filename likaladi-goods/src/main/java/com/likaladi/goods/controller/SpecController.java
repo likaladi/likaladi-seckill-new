@@ -7,6 +7,7 @@ import com.likaladi.goods.dto.SpecDto;
 import com.likaladi.goods.dto.SpecQueryDto;
 import com.likaladi.goods.entity.Specification;
 import com.likaladi.goods.service.SpecService;
+import com.likaladi.goods.vo.CategorySpecAttrVo;
 import com.likaladi.goods.vo.SpecVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,6 +47,12 @@ public class SpecController {
     @GetMapping("/{id}")
     public SpecVo queryById(@PathVariable Long id) {
         return specService.queryById(id);
+    }
+
+    @ApiOperation(value = "根据三级分类id获取规格属性", notes = "根据三级分类id获取规格属性")
+    @GetMapping("/listBy/{categoryId}")
+    public CategorySpecAttrVo listByCategoryId(@PathVariable Long cateogryId) {
+        return specService.listByCategoryId(cateogryId);
     }
 
     @ApiOperation(value="分页查询规格属性", notes="分页查询规格属性")
