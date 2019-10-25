@@ -19,7 +19,7 @@ public class SpecDto {
     private Long id;
 
     @ApiModelProperty(value = "分组名称")
-    private String group;
+    private String groupName;
 
     @ApiModelProperty(value = "属性名称")
     @NotBlank(message = "属性名称不能为空")
@@ -30,7 +30,7 @@ public class SpecDto {
     private List<String> datas;
 
     @ApiModelProperty(value = "1-文本框；2-单选框；3-复选框；4-下拉框")
-    @Range(value = "1, 2, 3, 4", message = "1-文本框；2-单选框；3-复选框；4-下拉框")
+    @Range(value = "1,2,3,4", message = "1-文本框；2-单选框；3-复选框；4-下拉框")
     private Integer type;
 
     @ApiModelProperty(value = "属性单位")

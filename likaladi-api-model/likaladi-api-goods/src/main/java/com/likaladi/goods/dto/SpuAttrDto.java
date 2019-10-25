@@ -18,7 +18,7 @@ import java.util.List;
 public class SpuAttrDto {
 
     @ApiModelProperty(value = "分组名称")
-    private String group;
+    private String groupName;
 
     @ApiModelProperty(value = "属性名称")
     @NotBlank(message = "属性名称不能为空")

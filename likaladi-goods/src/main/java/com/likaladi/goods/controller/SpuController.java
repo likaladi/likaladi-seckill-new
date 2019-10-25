@@ -51,16 +51,23 @@ public class SpuController {
         return spuService.querySpuSkuById(id);
     }
 
+    @ApiOperation(value = "根据id获取Spu详情信息", notes = "根据id获取Spu详情信息")
+    @GetMapping("/detail/{id}")
+    public SpuVo querySpuSkuDetail(@PathVariable Long id) {
+        return spuService.querySpuSkuDetail(id);
+    }
+
     @ApiOperation(value="分页查询规格属性", notes="分页查询规格属性")
     @PostMapping("/listByPage")
-    public PageResult<SpuVo> listByPPage(@RequestBody @Valid SpuQueryDto spuQueryDto) {
-        return spuService.listByPPage(spuQueryDto);
+    public PageResult<SpuVo> listByPage(@RequestBody @Valid SpuQueryDto spuQueryDto) {
+        return spuService.listByPage(spuQueryDto);
     }
 
     @ApiOperation(value = "编辑商品", notes = "编辑商品")
     @PutMapping
     public void update(@RequestBody @Valid SpuDto spuDto) {
         validate(spuDto, true);
+        spuService.updateSpuSku(spuDto);
     }
 
     private void validate(SpuDto spuDto, Boolean isUpdate){

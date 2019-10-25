@@ -23,22 +23,35 @@ public interface SpuService extends BaseService<Spu> {
     void saveSpuSku(SpuDto spuDto);
 
     /**
+     * 编辑商品
+     * @param spuDto
+     */
+    void updateSpuSku(SpuDto spuDto);
+
+    /**
      * 删除商品
      * @param ids
      */
     void deleteSpuSKu(List<Long> ids);
 
     /**
-     * 根据id查询商品
+     * 根据商品id查询商品信息
      * @param id
      * @return
      */
     SpuVo querySpuSkuById(Long id);
 
     /**
+     * 根据商品id查询商品详情SpuDetail
+     * @param id
+     * @return
+     */
+    SpuVo querySpuSkuDetail(Long id);
+
+    /**
      * 分页查询商品
      * @param spuQueryDto
      * @return
      */
-    PageResult<SpuVo> listByPPage(SpuQueryDto spuQueryDto);
+    PageResult<SpuVo> listByPage(SpuQueryDto spuQueryDto);
 }

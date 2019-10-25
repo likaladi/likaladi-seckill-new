@@ -13,7 +13,7 @@ public class SpuDetail implements Serializable {
     private Long spuId;
 
     /**
-     * 全部规格参数数据
+     * 全部属性数据
      */
     private String specifications;
 

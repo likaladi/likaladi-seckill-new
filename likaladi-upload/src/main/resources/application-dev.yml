@@ -13,7 +13,7 @@ spring:
       discovery:
         # 指定nacos server的地址
 #        server-addr: 192.168.0.186:8848
-        server-addr: 192.168.0.109:8848
+        server-addr: 192.168.0.108:8848
   #        # 指定namespace（隔离环境:pre,dev等）
   #        namespace: 56116141-d837-4d15-8842-94e153bb6cfb
   #        # 指定集群名称（可以优先地域访问：比如说北京和南京部署了同一集群名称，北京地区的优先访问,如果北京服务宕机，才会访问南京的服务）

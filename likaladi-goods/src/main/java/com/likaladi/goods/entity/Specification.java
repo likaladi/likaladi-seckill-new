@@ -11,7 +11,8 @@ public class Specification extends BaseEntity {
     /**
      * 分组名称
      */
-    private String group;
+    @Column(name = "group_name")
+    private String groupName;
 
     /**
      * 属性名称
