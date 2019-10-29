@@ -21,7 +21,7 @@ public class SpuVo extends SpuDto{
     private String categoryName3;
 
     @ApiModelProperty(value = "品牌名称")
-    private BrandVo brand;
+    private String brandName;
 
     @ApiModelProperty(value = "最低销售价")
     private BigDecimal minPrice;

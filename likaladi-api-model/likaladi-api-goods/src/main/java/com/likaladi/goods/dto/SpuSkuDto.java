@@ -29,7 +29,7 @@ public class SpuSkuDto {
     private String barcode;
 
     @ApiModelProperty(value = "销售价格")
-    @NotBlank(message = "销售价格不能为空")
+    @NotNull(message = "销售价格不能为空")
     private BigDecimal price;
 
     @ApiModelProperty(value = "sku下标组合")

@@ -9,11 +9,6 @@ import lombok.Data;
 @Data
 @Table(name = "sku")
 public class Sku extends BaseEntity {
-    /**
-     * sku id
-     */
-    @GeneratedValue(generator = "JDBC")
-    private Long id;
 
     /**
      * spu id
@@ -58,16 +53,4 @@ public class Sku extends BaseEntity {
      */
     @Column(name = "is_enable")
     private Boolean isEnable;
-
-    /**
-     * 添加时间
-     */
-    @Column(name = "create_time")
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    @Column(name = "update_time")
-    private Date updateTime;
 }

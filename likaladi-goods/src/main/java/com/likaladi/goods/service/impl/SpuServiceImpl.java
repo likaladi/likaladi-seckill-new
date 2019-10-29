@@ -162,6 +162,7 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
     private void dealWithSkus(Long spuId, SpuDto spuDto, boolean isSave){
         List<SpuSkuDto> spuSkuDtos = spuDto.getSkus();
 
+        Date date = new Date();
         List<Sku> skus = spuDto.getSkus().stream().map(spuSkuDto -> {
             Sku sku = new Sku();
             BeanUtils.copyProperties(spuSkuDto, sku);
@@ -171,6 +172,9 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
                     JSONObject.toJSONString(Arrays.asList()) : JSONObject.toJSONString(spuSkuDto.getIndexList()));
             sku.setOwnSpec(CollectionUtils.isEmpty(spuSkuDto.getSpecs()) ?
                     JSONObject.toJSONString(Arrays.asList()) : JSONObject.toJSONString(spuSkuDto.getSpecs()));
+            sku.setIsEnable(true);
+            sku.setCreateTime(date);
+            sku.setUpdateTime(date);
             return sku;
         }).collect(Collectors.toList());
 
