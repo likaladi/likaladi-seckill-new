@@ -1,20 +1,15 @@
 package com.likaladi.goods.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
-import com.likaladi.goods.dto.SpecDto;
 import com.likaladi.goods.dto.SpuDto;
 import com.likaladi.goods.dto.SpuQueryDto;
-import com.likaladi.goods.entity.Specification;
-import com.likaladi.goods.enums.SpecTypEnum;
 import com.likaladi.goods.service.SpuService;
 import com.likaladi.goods.vo.SpuVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -76,13 +71,6 @@ public class SpuController {
             ErrorBuilder.throwMsg("商品编辑id不能为空");
         }
 
-        /** 校验属性入参 */
-        spuDto.getAttrs().forEach(spuAttrDto -> {
-            if(!Objects.equals(SpecTypEnum.TEXTBOX.getCode(), spuAttrDto.getType())
-                    && CollectionUtils.isEmpty(spuAttrDto.getDatas())){
-                ErrorBuilder.throwMsg(String.format("属性【%】：对应的属性值不能为空", spuAttrDto.getName()));
-            }
-        });
 
         /** 校验规格入参 */
         spuDto.getSpecs().forEach(spuSpecDto -> {

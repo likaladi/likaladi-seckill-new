@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.likaladi.base.BaseServiceImpl;
 import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
+import com.likaladi.goods.dto.AttrsDto;
 import com.likaladi.goods.dto.SpecQueryDto;
 import com.likaladi.goods.entity.Category;
 import com.likaladi.goods.entity.Specification;
@@ -18,7 +19,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -59,17 +62,29 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
 
     @Override
     public CategorySpecAttrVo listByCategoryId(Long categoryId) {
+
         List<Specification> specifications = this.findListBy("categoryId", categoryId);
 
-        /** 将specifications 过滤出通用属性 转成对应的 categoryAttrVos */
-        List<CategoryAttrVo> categoryAttrVos = specifications.stream()
-                .filter(specification -> specification.getIsGloab())
-                .map(specification -> {
-                    CategoryAttrVo categoryAttrVo = new CategoryAttrVo();
-                    BeanUtils.copyProperties(specification, categoryAttrVo);
-                    categoryAttrVo.setDatas(JSONObject.parseArray(specification.getOptions(), String.class));
-                    return categoryAttrVo;
-                }).collect(Collectors.toList());
+        Map<String, List<Specification>> orderSkusRespMap = specifications.stream().collect(Collectors.groupingBy(Specification::getGroupName));
+
+        List<CategoryAttrVo> categoryAttrVoList = new ArrayList<>();
+
+        orderSkusRespMap.forEach((k, v) -> {
+
+            /** 将specifications 过滤出通用属性 转成对应的 attrsDtos */
+            List<AttrsDto> attrsDtos = v.stream().map(specification -> {
+                AttrsDto attrsDto = new AttrsDto();
+                BeanUtils.copyProperties(specification, attrsDto);
+                attrsDto.setDatas(JSONObject.parseArray(specification.getOptions(), String.class));
+                return attrsDto;
+            }).collect(Collectors.toList());
+
+            CategoryAttrVo categoryAttrVo = new CategoryAttrVo();
+            categoryAttrVo.setGroup(k);
+            categoryAttrVo.setParams(attrsDtos);
+
+            categoryAttrVoList.add(categoryAttrVo);
+        });
 
         /** 将specifications 过滤出拓展属性 转成对应的 categorySpecVos */
         List<CategorySpecVo> categorySpecVos = specifications.stream()
@@ -82,7 +97,7 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
                 }).collect(Collectors.toList());
 
         return CategorySpecAttrVo.builder()
-                .attrs(categoryAttrVos)
+                .attrs(categoryAttrVoList)
                 .specs(categorySpecVos)
                 .build();
     }

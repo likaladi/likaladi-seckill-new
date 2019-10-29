@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -14,31 +15,16 @@ import java.util.List;
  * @author likaladi
  */
 @Data
-@ApiModel(value = "属性")
+@ApiModel(value = "分组属性")
 public class SpuAttrDto {
 
     @ApiModelProperty(value = "分组名称")
-    private String groupName;
+    @NotBlank(message = "组名称不能为空")
+    private String group;
 
-    @ApiModelProperty(value = "属性名称")
-    @NotBlank(message = "属性名称不能为空")
-    private String name;
-
-    @ApiModelProperty(value = "属性值")
-    @NotEmpty(message = "属性值不能为空")
-    private List<String> datas;
-
-    @ApiModelProperty(value = "1-文本框；2-单选框；3-复选框；4-下拉框")
-    @Range(value = "1, 2, 3, 4", message = "1-文本框；2-单选框；3-复选框；4-下拉框")
-    private Integer type;
-
-    @ApiModelProperty(value = "属性单位")
-    private String unit;
-
-    @ApiModelProperty(value = "是否搜索属性：0不是；1是")
-    private Boolean isSearch;
-
-    @ApiModelProperty(value = "选中值")
-    private List<String> choiceVal;
+    @Valid
+    @ApiModelProperty(value = "attr属性")
+    @NotEmpty(message = "attr属性列表不能为空")
+    private List<AttrsDto> params;
 
 }
