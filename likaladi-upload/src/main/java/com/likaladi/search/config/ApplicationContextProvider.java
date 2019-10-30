@@ -1,4 +1,4 @@
-package com.likaladi.upload.config;
+package com.likaladi.search.config;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

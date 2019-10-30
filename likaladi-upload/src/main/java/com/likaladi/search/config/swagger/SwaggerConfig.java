@@ -1,4 +1,4 @@
-package com.likaladi.upload.config.swagger;
+package com.likaladi.search.config.swagger;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

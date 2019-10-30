@@ -1,4 +1,4 @@
-package com.likaladi.upload.config;
+package com.likaladi.search.config;
 
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.upload.enums.FileSource;

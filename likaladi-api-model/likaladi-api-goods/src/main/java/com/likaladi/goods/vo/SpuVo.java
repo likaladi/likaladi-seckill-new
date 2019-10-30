@@ -28,6 +28,4 @@ public class SpuVo extends SpuDto{
 
     @ApiModelProperty(value = "最高销售价")
     private BigDecimal maxPrice;
-
-
 }

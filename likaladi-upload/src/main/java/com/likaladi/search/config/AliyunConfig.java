@@ -1,4 +1,4 @@
-package com.likaladi.upload.config;
+package com.likaladi.search.config;
 
 import com.aliyun.oss.OSSClient;
 import org.springframework.beans.factory.annotation.Value;

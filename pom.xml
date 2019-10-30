@@ -10,6 +10,7 @@
         <module>likaladi-user</module>
 		<module>likaladi-goods</module>
 		<module>likaladi-upload</module>
+		<module>likaladi-search</module>
         <module>likaladi-base</module>
         <module>likaladi-api-model</module>
     </modules>
