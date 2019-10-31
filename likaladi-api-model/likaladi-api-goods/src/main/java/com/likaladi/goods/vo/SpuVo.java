@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @ApiModel(value = "商品返回对象")
@@ -28,4 +29,7 @@ public class SpuVo extends SpuDto{
 
     @ApiModelProperty(value = "最高销售价")
     private BigDecimal maxPrice;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
 }

@@ -1,6 +1,6 @@
 package com.likaladi.search.entity;
 
-import com.alibaba.fastjson.JSONObject;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -10,6 +10,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.util.*;
 
 /**
+ * @author likaladi
  *   String类型，又分两种：
  *      - text：可分词，不可参与聚合
  *      - keyword：不可分词，数据会作为完整字段进行匹配，可以参与聚合
@@ -20,6 +21,7 @@ import java.util.*;
  *
  */
 @Data
+@Builder
 @Document(indexName = "goods", type = "docs")
 public class Goods {
 
@@ -78,7 +80,7 @@ public class Goods {
     private String skus;
 
     /**
-     * 所有规格参数的集合：key是参数名，值是参数值，如下：
+     * 可搜索的规格属性集合：key是参数名，值是参数值，如下：
      *  {
      *    "specs":{
      *            "内存":[4G,6G],

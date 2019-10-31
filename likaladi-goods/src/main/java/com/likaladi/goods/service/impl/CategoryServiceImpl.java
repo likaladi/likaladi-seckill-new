@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,5 +45,16 @@ public class CategoryServiceImpl extends BaseServiceImpl<Category> implements Ca
             parent.setIsParent(true);
             this.update(parent);
         }
+    }
+
+    @Override
+    public List<String> queryNamesByIds(List<Long> ids) {
+        List<String> categoryNames = Arrays.asList();
+
+        findByIds(ids).forEach(category -> {
+            categoryNames.add(category.getName());
+        });
+
+        return categoryNames;
     }
 }

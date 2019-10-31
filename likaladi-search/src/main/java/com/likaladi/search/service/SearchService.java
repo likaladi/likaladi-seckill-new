@@ -1,7 +1,8 @@
 package com.likaladi.search.service;
 
-import com.likaladi.goods.vo.SpuVo;
+import com.likaladi.base.PageResult;
 import com.likaladi.search.entity.Goods;
+import com.likaladi.search.entity.SearchRequest;
 
 /**
  * 创建elasticsearch商品相关逻辑
@@ -9,9 +10,16 @@ import com.likaladi.search.entity.Goods;
 public interface SearchService {
 
     /**
-     * 创建elasticsearch商品Goods对象
-     * @param spuVo
-     * @return
+     * 创建goods索引
+     * @param spuId
      */
-    Goods buildGoods(SpuVo spuVo);
+    void createIndex(Long spuId);
+
+    /**
+     * 删除goods索引
+     * @param spuId
+     */
+    void deleteIndex(Long spuId);
+
+    PageResult<Goods> search(SearchRequest request);
 }

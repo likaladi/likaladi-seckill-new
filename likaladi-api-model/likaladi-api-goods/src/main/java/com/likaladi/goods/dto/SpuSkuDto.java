@@ -20,6 +20,9 @@ import java.util.List;
 @ApiModel(value = "商品sku入参")
 public class SpuSkuDto {
 
+    @ApiModelProperty(value = "skuId")
+    private Long skuId;
+
     @ApiModelProperty(value = "商品的图片")
     @NotEmpty(message = "商品图片不能为空")
     private List<String> imageList;

@@ -100,6 +100,7 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
 
         List<SpuSkuDto> spuSkuDtoList = skus.stream().map(sku -> {
             return SpuSkuDto.builder()
+                    .skuId(sku.getId())
                     .price(sku.getPrice())
                     .stockNum(sku.getStockNum())
                     .barcode(sku.getBarcode())

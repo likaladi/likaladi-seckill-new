@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface SpuMapper extends CommonMapper<Spu> {
 
-    String SQL_FILE = "select s.id, s.title, s.sub_title subTitle, s.image, s.min_price minPrice, s.max_price maxPrice, " +
+    String SQL_FILE = "select s.id, s.title, s.sub_title subTitle, s.image, s.min_price minPrice, s.max_price maxPrice, s.create_time createTime," +
             "s.cid1, s.cid2, s.cid3, b.id brandId, b.name brandName from spu s left join brand b on(s.brand_id = b.id) ";
 
     @Update({
