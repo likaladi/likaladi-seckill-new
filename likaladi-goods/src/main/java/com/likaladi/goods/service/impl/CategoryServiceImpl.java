@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author liwen
@@ -27,6 +28,11 @@ public class CategoryServiceImpl extends BaseServiceImpl<Category> implements Ca
     @Override
     public List<CategoryVo> queryByBrandId(Long brandId) {
         return categoryMapper.queryByBrandId(brandId);
+    }
+
+    @Override
+    public List<CategoryVo> queryByIds(Set<Long> ids) {
+        return categoryMapper.queryByIds(ids);
     }
 
     @Override

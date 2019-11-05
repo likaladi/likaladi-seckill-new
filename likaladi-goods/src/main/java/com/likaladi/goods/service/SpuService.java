@@ -6,6 +6,7 @@ import com.likaladi.goods.dto.SpuDto;
 import com.likaladi.goods.dto.SpuQueryDto;
 import com.likaladi.goods.entity.Specification;
 import com.likaladi.goods.entity.Spu;
+import com.likaladi.goods.vo.SpuDetailVo;
 import com.likaladi.goods.vo.SpuVo;
 
 import java.util.List;
@@ -39,14 +40,14 @@ public interface SpuService extends BaseService<Spu> {
      * @param id
      * @return
      */
-    SpuVo querySpuSkuById(Long id);
+    SpuVo querySpuById(Long id);
 
     /**
      * 根据商品id查询商品详情SpuDetail
      * @param id
      * @return
      */
-    SpuVo querySpuSkuDetail(Long id);
+    SpuDetailVo querySpuSkuDetail(Long id);
 
     /**
      * 分页查询商品
@@ -54,4 +55,11 @@ public interface SpuService extends BaseService<Spu> {
      * @return
      */
     PageResult<SpuVo> listByPage(SpuQueryDto spuQueryDto);
+
+    /**
+     * 查询规格对应的分类是否存在记录
+     * @param categoryIds
+     * @return
+     */
+    int queryCountByCateogryIds(List<Long> categoryIds);
 }

@@ -6,6 +6,7 @@ import com.likaladi.goods.entity.Category;
 import com.likaladi.goods.vo.CategoryVo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author liwen
@@ -19,6 +20,8 @@ public interface CategoryService extends BaseService<Category> {
      * @return
      */
     List<CategoryVo> queryByBrandId(Long brandId);
+
+    List<CategoryVo> queryByIds(Set<Long> ids);
 
     /**
      * 保存分类

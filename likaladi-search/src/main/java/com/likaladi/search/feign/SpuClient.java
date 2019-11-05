@@ -1,5 +1,6 @@
 package com.likaladi.search.feign;
 
+import com.likaladi.goods.vo.SpuDetailVo;
 import com.likaladi.goods.vo.SpuVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -23,5 +24,5 @@ public interface SpuClient {
      * @return
      */
     @GetMapping("/detail/{id}")
-    SpuVo querySpuSkuDetail(@PathVariable Long id);
+    SpuDetailVo querySpuSkuDetail(@PathVariable Long id);
 }

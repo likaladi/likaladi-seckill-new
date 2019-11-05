@@ -7,16 +7,10 @@ import com.likaladi.base.BaseServiceImpl;
 import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.goods.dto.*;
-import com.likaladi.goods.entity.Category;
-import com.likaladi.goods.entity.Sku;
-import com.likaladi.goods.entity.Spu;
-import com.likaladi.goods.entity.SpuDetail;
+import com.likaladi.goods.entity.*;
 import com.likaladi.goods.mapper.SpuMapper;
-import com.likaladi.goods.service.CategoryService;
-import com.likaladi.goods.service.SkuService;
-import com.likaladi.goods.service.SpuDetailService;
-import com.likaladi.goods.service.SpuService;
-import com.likaladi.goods.vo.SpuVo;
+import com.likaladi.goods.service.*;
+import com.likaladi.goods.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +38,9 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private SpecService specService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -76,40 +73,57 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
     }
 
     @Override
-    public SpuVo querySpuSkuById(Long id) {
-        SpuVo spuVo = spuMapper.querySpuInfo(id);
+    public SpuVo querySpuById(Long id) {
+
+        SpuVo spuVo = spuMapper.querySpuById(id);
+
+        SpuDetail spuDetail = spuDetailService.findById(id);
+
         if(Objects.isNull(spuVo)){
             ErrorBuilder.throwMsg("不存在匹配的记录");
         }
 
-        setSpuVos(Arrays.asList(spuVo));
+        Map<Long, CategoryVo> categoryMap = getCategoryMap(spuVo);
+
+        spuVo.setCategory1(categoryMap.get(spuVo.getCid1()));
+        spuVo.setCategory2(categoryMap.get(spuVo.getCid2()));
+        spuVo.setCategory3(categoryMap.get(spuVo.getCid3()));
+
+        spuVo.setDescription(spuDetail.getDescription());
 
         return spuVo;
     }
 
     @Override
-    public SpuVo querySpuSkuDetail(Long id) {
+    public SpuDetailVo querySpuSkuDetail(Long id) {
+
+        Spu spu = this.findById(id);
+
         SpuDetail spuDetail = spuDetailService.findById(id);
-        SpuVo spuVo = new SpuVo();
-        spuVo.setId(id);
-        spuVo.setDescription(spuDetail.getDescription());
-        spuVo.setAttrs(JSONObject.parseArray(spuDetail.getSpecifications(), SpuAttrDto.class));
-        spuVo.setSpecs(JSONObject.parseArray(spuDetail.getSpecTemplate(), SpuSpecDto.class));
+
+        if(Objects.isNull(spuDetail)){
+            ErrorBuilder.throwMsg("不存在匹配的记录");
+        }
+
+        SpuSpecVo spuSpecVo = specService.listByCategoryId(spu.getCid3(), spuDetail);
 
         List<Sku> skus = skuService.findListBy("spuId", id);
 
-        List<SpuSkuDto> spuSkuDtoList = skus.stream().map(sku -> {
-            return SpuSkuDto.builder()
-                    .skuId(sku.getId())
-                    .price(sku.getPrice())
-                    .stockNum(sku.getStockNum())
-                    .barcode(sku.getBarcode())
-                    .imageList(JSONObject.parseArray(sku.getImages(), String.class))
-                    .specs(JSONObject.parseArray(sku.getOwnSpec(), SkuSpecDto.class))
-                    .build();
+        List<SpuSkuVo> spuSkuVoList = skus.stream().map(sku -> {
+            SpuSkuVo spuSkuVo = new SpuSkuVo();
+            BeanUtils.copyProperties(sku, spuSkuVo);
+            spuSkuVo.setSkuId(sku.getId());
+            spuSkuVo.setImageList(JSONObject.parseArray(sku.getImages(), String.class));
+
+            Map<String, Object> jsonMap = JSONObject.parseObject(sku.getOwnSpec(), Map.class);
+            spuSkuVo.setSpecs(jsonMap);
+            return spuSkuVo;
         }).collect(Collectors.toList());
 
-        return spuVo;
+        return SpuDetailVo.builder()
+                .spuSpecVo(spuSpecVo)
+                .skus(spuSkuVoList)
+                .build();
     }
 
     @Override
@@ -119,9 +133,14 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
 
         Page<SpuVo> page = (Page<SpuVo>) spuMapper.selectByPage(spuQueryDto);
 
-        setSpuVos(page.getResult());
+        setCategoryMap(page.getResult());
 
         return new PageResult<>(page.getTotal(), page.getResult(), null);
+    }
+
+    @Override
+    public int queryCountByCateogryIds(List<Long> categoryIds) {
+        return spuMapper.queryCountByCateogryIds(categoryIds);
     }
 
     private Spu dealWithSpu(SpuDto spuDto, Boolean isSave){
@@ -187,7 +206,21 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
         skuService.save(skus);
     }
 
-    private void setSpuVos(List<SpuVo> spuVos){
+    private Map<Long, CategoryVo> getCategoryMap(SpuVo spuVo){
+        Set<Long> categorySet = new HashSet<>(3);
+        categorySet.add(spuVo.getCid1());
+        categorySet.add(spuVo.getCid2());
+        categorySet.add(spuVo.getCid3());
+
+        List<CategoryVo> categories = categoryService.queryByIds(categorySet);
+
+        /** 将categories集合 转成对应的categoryMap：id -> Category  */
+        Map<Long, CategoryVo> categoryMap = categories.stream().collect(Collectors.toMap(CategoryVo::getId, Function.identity()));
+
+        return categoryMap;
+    }
+
+    private void setCategoryMap(List<SpuVo> spuVos){
 
         /** Set集合存储去重的分类id */
         Set<Long> categorySet = new HashSet<>(spuVos.size() * 3);
@@ -197,14 +230,15 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
             categorySet.add(spuVo.getCid3());
         });
 
-        List<Category> categories = categoryService.findByIds(new ArrayList(categorySet));
+        List<CategoryVo> categories = categoryService.queryByIds(categorySet);
 
         /** 将categories集合 转成对应的categoryMap：id -> Category  */
-        Map<Long, Category> categoryMap = categories.stream().collect(Collectors.toMap(Category::getId, Function.identity()));
+        Map<Long, CategoryVo> categoryMap = categories.stream().collect(Collectors.toMap(CategoryVo::getId, Function.identity()));
+
         spuVos.forEach(spuVo -> {
-            spuVo.setCategoryName1(categoryMap.get(spuVo.getCid1()).getName());
-            spuVo.setCategoryName2(categoryMap.get(spuVo.getCid2()).getName());
-            spuVo.setCategoryName3(categoryMap.get(spuVo.getCid3()).getName());
+            spuVo.setCategory1(categoryMap.get(spuVo.getCid1()));
+            spuVo.setCategory2(categoryMap.get(spuVo.getCid2()));
+            spuVo.setCategory3(categoryMap.get(spuVo.getCid3()));
         });
 
     }

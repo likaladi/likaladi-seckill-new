@@ -53,13 +53,12 @@ public class SpuDto {
     @ApiModelProperty(value = "商品描述")
     private String description;
 
-    @Valid
     @ApiModelProperty(value = "通用属性")
     @NotEmpty(message = "通用属性不能为空")
-    private List<SpuAttrDto> attrs;
+    private List<SpecAttrDto> attrs;
 
     @ApiModelProperty(value = "规格属性")
-    private List<SpuSpecDto> specs;
+    private List<SpecAttrDto> specs;
 
     @Valid
     @ApiModelProperty(value = "sku值")

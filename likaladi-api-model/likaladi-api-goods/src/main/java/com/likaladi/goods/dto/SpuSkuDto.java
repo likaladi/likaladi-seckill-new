@@ -1,5 +1,6 @@
 package com.likaladi.goods.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -12,11 +13,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @ApiModel(value = "商品sku入参")
 public class SpuSkuDto {
 
@@ -39,7 +38,7 @@ public class SpuSkuDto {
     private List<Integer> indexList;
 
     @ApiModelProperty(value = "规格属性")
-    private List<SkuSpecDto> specs;
+    private Map<String, Object> specs;
 
     @ApiModelProperty(value = "库存数量")
     @NotNull(message = "库存数量不能为空")

@@ -6,23 +6,20 @@ import com.github.pagehelper.PageHelper;
 import com.likaladi.base.BaseServiceImpl;
 import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
-import com.likaladi.goods.dto.AttrsDto;
 import com.likaladi.goods.dto.SpecQueryDto;
-import com.likaladi.goods.entity.Category;
 import com.likaladi.goods.entity.Specification;
+import com.likaladi.goods.entity.SpuDetail;
 import com.likaladi.goods.enums.SpecTypEnum;
 import com.likaladi.goods.mapper.SpecificationMapper;
-import com.likaladi.goods.service.CategoryService;
 import com.likaladi.goods.service.SpecService;
 import com.likaladi.goods.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -35,22 +32,29 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
     private SpecificationMapper specificationMapper;
 
     @Override
-    public SpecVo queryById(Long id) {
+    public SpecParamVo queryById(Long id) {
 
-        SpecVo specVo = specificationMapper.queryById(id);
-        if(Objects.isNull(specVo)){
+        SpecParamVo specParamVo = specificationMapper.queryById(id);
+        if(Objects.isNull(specParamVo)){
             ErrorBuilder.throwMsg("记录不存在");
         }
-        specVo.setDatas(JSONObject.parseArray(specVo.getOptions(), String.class));
-        specVo.setTypeName(SpecTypEnum.getValue(specVo.getType()));
-        return specVo;
+        specParamVo.setDatas(JSONObject.parseArray(specParamVo.getOptions(), String.class));
+        specParamVo.setTypeName(SpecTypEnum.getValue(specParamVo.getType()));
+
+        return specParamVo;
     }
 
     @Override
-    public PageResult<SpecVo> listByPPage(SpecQueryDto specQueryDto) {
+    public SpuSpecVo getSpuSpecVo(List<Long> ids) {
+        List<SpecParamVo> specParamVos = specificationMapper.queryListByIds(ids);
+        return getCommonSpuSpecVo(specParamVos, null);
+    }
+
+    @Override
+    public PageResult<SpecParamVo> listByPage(SpecQueryDto specQueryDto) {
         PageHelper.startPage(specQueryDto.getPage(),specQueryDto.getRows());
 
-        Page<SpecVo> page = (Page<SpecVo>) specificationMapper.selectByPage(specQueryDto);
+        Page<SpecParamVo> page = (Page<SpecParamVo>) specificationMapper.selectByPage(specQueryDto);
 
         page.getResult().forEach(specVo -> {
             specVo.setDatas(JSONObject.parseArray(specVo.getOptions(), String.class));
@@ -61,44 +65,102 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
     }
 
     @Override
-    public CategorySpecAttrVo listByCategoryId(Long categoryId) {
+    public SpuSpecVo listByCategoryId(Long categoryId, SpuDetail spuDetail) {
 
-        List<Specification> specifications = this.findListBy("categoryId", categoryId);
+        List<SpecParamVo> specParamVos = specificationMapper.queryByCategoryId(categoryId);
 
-        Map<String, List<Specification>> orderSkusRespMap = specifications.stream().collect(Collectors.groupingBy(Specification::getGroupName));
+        return getCommonSpuSpecVo(specParamVos, spuDetail);
 
-        List<CategoryAttrVo> categoryAttrVoList = new ArrayList<>();
+    }
 
-        orderSkusRespMap.forEach((k, v) -> {
+    private SpuSpecVo getCommonSpuSpecVo(List<SpecParamVo> specParamVos, SpuDetail spuDetail){
+        /** 筛选属性 */
+        List<SpecParamVo> attrList = specParamVos.stream()
+                .filter(specParamVo -> specParamVo.getIsGloab())
+                .map(specParamVo -> {
+                    specParamVo.setDatas(JSONObject.parseArray(specParamVo.getOptions(), String.class));
+                    return specParamVo;
+                 })
+                .collect(Collectors.toList());
 
-            /** 将specifications 过滤出通用属性 转成对应的 attrsDtos */
-            List<AttrsDto> attrsDtos = v.stream().map(specification -> {
-                AttrsDto attrsDto = new AttrsDto();
-                BeanUtils.copyProperties(specification, attrsDto);
-                attrsDto.setDatas(JSONObject.parseArray(specification.getOptions(), String.class));
-                return attrsDto;
-            }).collect(Collectors.toList());
-
-            CategoryAttrVo categoryAttrVo = new CategoryAttrVo();
-            categoryAttrVo.setGroup(k);
-            categoryAttrVo.setParams(attrsDtos);
-
-            categoryAttrVoList.add(categoryAttrVo);
-        });
-
-        /** 将specifications 过滤出拓展属性 转成对应的 categorySpecVos */
-        List<CategorySpecVo> categorySpecVos = specifications.stream()
-                .filter(specification -> !specification.getIsGloab())
-                .map(specification -> {
-                    CategorySpecVo categorySpecVo = new CategorySpecVo();
-                    BeanUtils.copyProperties(specification, categorySpecVo);
-                    categorySpecVo.setValue(JSONObject.parseArray(specification.getOptions(), String.class));
-                    return categorySpecVo;
+              /** 筛选规格 */
+        List<SpecParamVo> specList = specParamVos.stream()
+                .filter(specParamVo -> !specParamVo.getIsGloab())
+                .map(specParamVo -> {
+                    specParamVo.setDatas(JSONObject.parseArray(specParamVo.getOptions(), String.class));
+                    return specParamVo;
                 }).collect(Collectors.toList());
 
-        return CategorySpecAttrVo.builder()
-                .attrs(categoryAttrVoList)
-                .specs(categorySpecVos)
+        /** 根据groupName分组将 attrList 转换对应的 attrMap： groupName -> List<SpecParamVo>*/
+        Map<String, List<SpecParamVo>> attrMap = attrList.stream().collect(Collectors.groupingBy(SpecParamVo::getGroupName));
+
+        /** 根据groupName分组将 specList 转换对应的 specMap： groupName -> List<SpecParamVo>*/
+        Map<String, List<SpecParamVo>> specMap = specList.stream().collect(Collectors.groupingBy(SpecParamVo::getGroupName));
+
+        Map<Long, SpecAttrParamVo> attrVoMap = null;
+        Map<Long, SpecAttrParamVo> specVoMap = null;
+        if(Objects.nonNull(spuDetail)){
+            List<SpecAttrParamVo> attrParamList = JSONObject.parseArray(spuDetail.getSpecifications(), SpecAttrParamVo.class);
+            List<SpecAttrParamVo> specParamList = JSONObject.parseArray(spuDetail.getSpecTemplate(), SpecAttrParamVo.class);
+
+            /** 将List<SpecAttrParamVo> attrParamList 转成对应的attrVoMap：k -> SpecAttrParamVo */
+            attrVoMap = attrParamList.stream().collect(Collectors.toMap(SpecAttrParamVo::getK, Function.identity()));
+            /** 将List<SpecAttrParamVo> specParamList 转成对应的specVoMap：k -> SpecAttrParamVo */
+            specVoMap = specParamList.stream().collect(Collectors.toMap(SpecAttrParamVo::getK, Function.identity()));
+        }
+
+        List<SpecVo> attrVoList = getSpecVo(attrMap, attrVoMap);
+
+        List<SpecVo> specVoList = getSpecVo(specMap, specVoMap);
+
+        return SpuSpecVo.builder()
+                .attrs(attrVoList)
+                .specs(specVoList)
                 .build();
+    }
+
+
+    private List<SpecVo> getSpecVo(Map<String, List<SpecParamVo>> specMap, Map<Long, SpecAttrParamVo> specAttrParamVoMap){
+
+        List<SpecVo> specVoList = new ArrayList<>();
+
+        specMap.forEach((k, v) -> {
+
+            List<SpecAttrParamVo> spuSpecParamVos = v.stream().map(specParamVo -> {
+
+                List<String> options = JSONObject.parseArray(specParamVo.getOptions(), String.class);
+
+                if(Objects.nonNull(specAttrParamVoMap) && !CollectionUtils.isEmpty(options)){
+
+                    /** 获取商品规格属性选中值 */
+                    List<String> choiceData = specAttrParamVoMap.get(specParamVo.getId()).getV();
+
+                    /** 如果商品选中值不存在 分类对应的规格属性值中，则添加到分类的属性值中 */
+                    choiceData.forEach(s -> {
+                        if(!options.contains(s)){
+                            options.add(s);
+                        }
+                    });
+                }
+
+                return SpecAttrParamVo.builder()
+                        .k(specParamVo.getId())
+                        .v(Objects.isNull(specAttrParamVoMap) ? Arrays.asList() : specAttrParamVoMap.get(specParamVo.getId()).getV())
+                        .name(specParamVo.getName())
+                        .options(options)
+                        .type(specParamVo.getType())
+                        .build();
+
+            }).collect(Collectors.toList());
+
+            specVoList.add(
+                    SpecVo.builder()
+                            .groupName(k)
+                            .params(spuSpecParamVos)
+                            .build()
+            );
+        });
+
+        return specVoList;
     }
 }

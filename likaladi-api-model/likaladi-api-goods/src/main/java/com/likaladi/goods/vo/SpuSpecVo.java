@@ -4,18 +4,19 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
-
 import java.util.List;
 
-
+/**
+ * @author likaladi
+ */
 @Data
 @Builder
-@ApiModel(value = "分类加载规格属性")
-public class CategorySpecAttrVo  {
+@ApiModel(value = "规格属性响应对象")
+public class SpuSpecVo {
 
     @ApiModelProperty(value = "属性")
-    private List<CategoryAttrVo> attrs;
+    private List<SpecVo> attrs;
 
     @ApiModelProperty(value = "规格")
-    private List<CategorySpecVo> specs;
+    private List<SpecVo> specs;
 }

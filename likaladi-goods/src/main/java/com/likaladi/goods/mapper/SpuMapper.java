@@ -25,8 +25,6 @@ public interface SpuMapper extends CommonMapper<Spu> {
     })
     int deleteSpuByIds(@Param("ids") List<Long> ids);
 
-    @Select(SQL_FILE + "where s.id = #{id}")
-    SpuVo querySpuInfo(Long id);
 
     @Select({
             "<script>"
@@ -45,4 +43,17 @@ public interface SpuMapper extends CommonMapper<Spu> {
             + "</script>"
     })
     List<SpuVo> selectByPage(@Param("condition") SpuQueryDto spuQueryDto);
+
+    @Select(SQL_FILE + " where s.id = #{id}")
+    SpuVo querySpuById(@Param("id") Long id);
+
+    @Select({
+            "<script>"
+                    + "select count(1) from spu where cid3 in "
+                    + "<foreach item='cateogryId' index='index' collection='cateogryIds' open='(' separator=',' close=')'>"
+                    + "#{cateogryId}"
+                    + "</foreach>"
+                    + "</script>"
+    })
+    int queryCountByCateogryIds(@Param("cateogryIds") List<Long> categoryIds);
 }

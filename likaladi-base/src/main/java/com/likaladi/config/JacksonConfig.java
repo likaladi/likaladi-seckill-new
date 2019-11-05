@@ -31,7 +31,7 @@ public class JacksonConfig
         // Include.NON_EMPTY 属性为 空（""） 或者为 NULL 都不序列化，则返回的json是没有这个字段的。这样对移动端会更省流量
         // Include.NON_NULL 属性为NULL 不序列化,就是为null的字段不参加序列化
         //objectMapper.setSerializationInclusion(Include.NON_EMPTY);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         // 字段保留，将null值转为""
        /* objectMapper.getSerializerProvider().setNullValueSerializer(new JsonSerializer<Object>()
     {

@@ -5,6 +5,7 @@ import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.goods.vo.BrandVo;
 import com.likaladi.goods.vo.CategoryVo;
+import com.likaladi.goods.vo.SpuDetailVo;
 import com.likaladi.goods.vo.SpuVo;
 import com.likaladi.search.entity.Goods;
 import com.likaladi.search.entity.SearchRequest;
@@ -161,20 +162,20 @@ public class SearchServiceImpl implements SearchService {
         List<String> names = categoryClient.queryNamesByIds(Arrays.asList(spuVo.getCid1(), spuVo.getCid2(), spuVo.getCid3()));
 
         /** 查询商品详情和sku信息 */
-        SpuVo spuDetail = spuClient.querySpuSkuDetail(spuVo.getId());
+        SpuDetailVo spuDetailVo = spuClient.querySpuSkuDetail(spuVo.getId());
 
         /** 处理sku，仅封装id、价格、标题、图片，并获得价格集合 */
         List<Double> prices = new ArrayList<>();
         List<Sku> skuList = new ArrayList<>();
 
-        spuDetail.getSkus().forEach(spuSkuDto -> {
-            prices.add(spuSkuDto.getPrice().doubleValue());
+        spuDetailVo.getSkus().forEach(spuSkuVo -> {
+            prices.add(spuSkuVo.getPrice().doubleValue());
             skuList.add(
                     Sku.builder()
-                            .id(spuSkuDto.getSkuId())
-                            .title(spuDetail.getTitle())
-                            .price(spuSkuDto.getPrice().doubleValue())
-                            .image(spuSkuDto.getImageList().get(0))
+                            .id(spuSkuVo.getSkuId())
+                            .title(spuVo.getTitle())
+                            .price(spuSkuVo.getPrice().doubleValue())
+                            .image(spuSkuVo.getImageList().get(0))
                             .build()
             );
         });
@@ -185,7 +186,7 @@ public class SearchServiceImpl implements SearchService {
         }
 
         /** 获取可搜索的规格属性参数 */
-        Map<String, Object> searchMap = getSearchMap(spuDetail);
+        //Map<String, Object> searchMap = getSearchMap(spuDetail);
 
         return Goods.builder()
                 .id(spuVo.getId())
@@ -197,38 +198,38 @@ public class SearchServiceImpl implements SearchService {
                 .createTime(spuVo.getCreateTime())
                 .price(prices)
                 .skus(skuJson)
-                .specs(searchMap)
+                //.specs(searchMap)
                 .all(spuVo.getTitle() + " " + spuVo.getBrandName() + " " +StringUtils.join(names, " "))
                 .build();
     }
 
-    /**
-     * 将商品搜索的规格属性 转成对应的 searchMap
-     * @param spuDetail
-     * @return
-     */
-    private Map<String, Object> getSearchMap(SpuVo spuDetail) {
-
-        Map<String, Object> searchMap = new HashMap<>(spuDetail.getSpecs().size());
-
-        /** 筛选搜索的规格存储到 searchMap*/
-        spuDetail.getSpecs().forEach(spuSpecDto -> {
-            if(spuSpecDto.getIsSearch()){
-                searchMap.put(spuSpecDto.getKey(), spuSpecDto.getValue());
-            }
-        });
-
-        /** 筛选搜索的属性存储到 searchMap*/
-        spuDetail.getAttrs().forEach(spuAttrDto -> {
-            spuAttrDto.getParams().forEach(attrsDto -> {
-                if(attrsDto.getIsSearch()){
-                    searchMap.put(attrsDto.getName(), attrsDto.getChoiceVal());
-                }
-            });
-        });
-
-        return searchMap;
-    }
+//    /**
+//     * 将商品搜索的规格属性 转成对应的 searchMap
+//     * @param spuDetail
+//     * @return
+//     */
+//    private Map<String, Object> getSearchMap(SpuVo spuDetail) {
+//
+//        Map<String, Object> searchMap = new HashMap<>(spuDetail.getSpecs().size());
+//
+//        /** 筛选搜索的规格存储到 searchMap*/
+//        spuDetail.getSpecs().forEach(spuSpecDto -> {
+//            if(spuSpecDto.getIsSearch()){
+//                searchMap.put(spuSpecDto.getKey(), spuSpecDto.getValue());
+//            }
+//        });
+//
+//        /** 筛选搜索的属性存储到 searchMap*/
+//        spuDetail.getAttrs().forEach(spuAttrDto -> {
+//            spuAttrDto.getParams().forEach(attrsDto -> {
+//                if(attrsDto.getIsSearch()){
+//                    searchMap.put(attrsDto.getName(), attrsDto.getChoiceVal());
+//                }
+//            });
+//        });
+//
+//        return searchMap;
+//    }
 
     private String getSkuJson(List<Sku> skuList){
         try{
