@@ -13,11 +13,9 @@ import com.likaladi.goods.enums.SpecTypEnum;
 import com.likaladi.goods.mapper.SpecificationMapper;
 import com.likaladi.goods.service.SpecService;
 import com.likaladi.goods.vo.*;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -73,6 +71,17 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
 
     }
 
+    @Override
+    public SpuSpecVo formatBySpecAttrList(List<SpecParamVo> specParamVos, SpuDetail spuDetail) {
+        return getCommonSpuSpecVo(specParamVos, spuDetail);
+    }
+
+    @Override
+    public List<SpecParamVo> listByCategoryIds(Collection categoryIds) {
+        List<SpecParamVo> specParamVos = specificationMapper.queryByCategoryIds(categoryIds);
+        return specParamVos;
+    }
+
     private SpuSpecVo getCommonSpuSpecVo(List<SpecParamVo> specParamVos, SpuDetail spuDetail){
         /** 筛选属性 */
         List<SpecParamVo> attrList = specParamVos.stream()
@@ -97,8 +106,8 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
         /** 根据groupName分组将 specList 转换对应的 specMap： groupName -> List<SpecParamVo>*/
         Map<String, List<SpecParamVo>> specMap = specList.stream().collect(Collectors.groupingBy(SpecParamVo::getGroupName));
 
-        Map<Long, SpecAttrParamVo> attrVoMap = null;
-        Map<Long, SpecAttrParamVo> specVoMap = null;
+        Map<String, SpecAttrParamVo> attrVoMap = null;
+        Map<String, SpecAttrParamVo> specVoMap = null;
         if(Objects.nonNull(spuDetail)){
             List<SpecAttrParamVo> attrParamList = JSONObject.parseArray(spuDetail.getSpecifications(), SpecAttrParamVo.class);
             List<SpecAttrParamVo> specParamList = JSONObject.parseArray(spuDetail.getSpecTemplate(), SpecAttrParamVo.class);
@@ -120,7 +129,7 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
     }
 
 
-    private List<SpecVo> getSpecVo(Map<String, List<SpecParamVo>> specMap, Map<Long, SpecAttrParamVo> specAttrParamVoMap){
+    private List<SpecVo> getSpecVo(Map<String, List<SpecParamVo>> specMap, Map<String, SpecAttrParamVo> specAttrParamVoMap){
 
         List<SpecVo> specVoList = new ArrayList<>();
 
@@ -130,25 +139,32 @@ public class SpecServiceImpl extends BaseServiceImpl<Specification> implements S
 
                 List<String> options = JSONObject.parseArray(specParamVo.getOptions(), String.class);
 
+                SpecAttrParamVo specAttrParamVo = null;
+
                 if(Objects.nonNull(specAttrParamVoMap) && !CollectionUtils.isEmpty(options)){
 
-                    /** 获取商品规格属性选中值 */
-                    List<String> choiceData = specAttrParamVoMap.get(specParamVo.getId()).getV();
+                    specAttrParamVo = specAttrParamVoMap.get(specParamVo.getId());
 
-                    /** 如果商品选中值不存在 分类对应的规格属性值中，则添加到分类的属性值中 */
-                    choiceData.forEach(s -> {
-                        if(!options.contains(s)){
-                            options.add(s);
-                        }
-                    });
+                    if(Objects.nonNull(specAttrParamVo)){
+                        /** 获取商品规格属性选中值 */
+                        List<String> choiceData = specAttrParamVoMap.get(specParamVo.getId()).getV();
+
+                        /** 如果商品选中值不存在 分类对应的规格属性值中，则添加到分类的属性值中 */
+                        choiceData.forEach(s -> {
+                            if(!options.contains(s)){
+                                options.add(s);
+                            }
+                        });
+                    }
                 }
 
                 return SpecAttrParamVo.builder()
-                        .k(specParamVo.getId())
-                        .v(Objects.isNull(specAttrParamVoMap) ? Arrays.asList() : specAttrParamVoMap.get(specParamVo.getId()).getV())
+                        .k(String.valueOf(specParamVo.getId()))
+                        .v(Objects.isNull(specAttrParamVoMap) ? Arrays.asList() : Objects.nonNull(specAttrParamVo) ? specAttrParamVo.getV() : Arrays.asList())
                         .name(specParamVo.getName())
                         .options(options)
                         .type(specParamVo.getType())
+                        .isSearch(specParamVo.getIsSearch())
                         .build();
 
             }).collect(Collectors.toList());

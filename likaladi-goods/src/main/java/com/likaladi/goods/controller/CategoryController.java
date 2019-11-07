@@ -80,9 +80,9 @@ public class CategoryController {
     }
 
     @ApiOperation(value = "根据多个ids查询分类名称", notes = "根据多个ids查询分类名称")
-    @PostMapping("names")
-    public List<String> queryNamesByIds(@RequestBody List<Long> ids) {
-        return categoryService.queryNamesByIds(ids);
+    @PostMapping("ids")
+    public List<CategoryVo> queryNamesByIds(@RequestBody List<Long> ids) {
+        return categoryService.queryCategoryByIds(ids);
     }
 
 

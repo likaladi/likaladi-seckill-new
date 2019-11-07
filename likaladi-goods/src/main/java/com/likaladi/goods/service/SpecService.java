@@ -8,6 +8,7 @@ import com.likaladi.goods.entity.SpuDetail;
 import com.likaladi.goods.vo.SpecParamVo;
 import com.likaladi.goods.vo.SpuSpecVo;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -43,5 +44,20 @@ public interface SpecService extends BaseService<Specification> {
      * @return
      */
     SpuSpecVo listByCategoryId(Long categoryId, SpuDetail spuDetail);
+
+    /**
+     * 分类对应的规格属性转成 SpuSpecVo对象
+     * @param specParamVos
+     * @param spuDetail
+     * @return
+     */
+    SpuSpecVo formatBySpecAttrList(List<SpecParamVo> specParamVos, SpuDetail spuDetail);
+
+    /**
+     * 根据多个分类id查询规格属性列表
+     * @param categoryIds
+     * @return
+     */
+    List<SpecParamVo> listByCategoryIds(Collection categoryIds);
 
 }

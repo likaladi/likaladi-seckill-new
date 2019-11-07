@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author liwen
@@ -54,13 +55,13 @@ public class CategoryServiceImpl extends BaseServiceImpl<Category> implements Ca
     }
 
     @Override
-    public List<String> queryNamesByIds(List<Long> ids) {
-        List<String> categoryNames = Arrays.asList();
+    public List<CategoryVo> queryCategoryByIds(List<Long> ids) {
 
-        findByIds(ids).forEach(category -> {
-            categoryNames.add(category.getName());
-        });
+        return this.findByIds(ids).stream().map(category -> {
+            CategoryVo categoryVo = new CategoryVo();
+            BeanUtils.copyProperties(category, categoryVo);
+            return categoryVo;
+        }).collect(Collectors.toList());
 
-        return categoryNames;
     }
 }

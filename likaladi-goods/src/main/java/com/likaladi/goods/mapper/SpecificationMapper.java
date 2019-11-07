@@ -8,6 +8,7 @@ import com.likaladi.goods.vo.SpecVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface SpecificationMapper extends CommonMapper<Specification> {
@@ -21,6 +22,16 @@ public interface SpecificationMapper extends CommonMapper<Specification> {
 
     @Select(SQL + "WHERE s.category_id = #{categoryId}")
     List<SpecParamVo> queryByCategoryId(@Param("categoryId") Long categoryId);
+
+    @Select({
+            "<script>"
+                    + SQL+ "WHERE s.category_id in "
+                    + "<foreach item='categoryId' index='index' collection='categoryIds' open='(' separator=',' close=')'>"
+                    +   "#{categoryId}"
+                    + "</foreach>"
+                    + "</script>"
+    })
+    List<SpecParamVo> queryByCategoryIds(@Param("categoryIds") Collection categoryIds);
 
     @Select({
             "<script>"

@@ -20,7 +20,7 @@ import java.util.List;
 public class SpecAttrParamVo {
 
     @ApiModelProperty(value = "规格属性id")
-    private Long k;
+    private String k;
 
     @ApiModelProperty(value = "规格属性选中值")
     private List<String> v;
@@ -33,5 +33,8 @@ public class SpecAttrParamVo {
 
     @ApiModelProperty(value = "操作类型：1文本框；2单选框；3复选框；4下拉框")
     private Integer type;
+
+    @ApiModelProperty(value = "是否搜索属性")
+    private Boolean isSearch;
 
 }

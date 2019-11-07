@@ -30,10 +30,10 @@ public interface CategoryService extends BaseService<Category> {
     void save(CategoryDto categoryDto);
 
     /**
-     * 根据ids列表查询对应的名称
+     * 根据ids列表查询分类对象
      * @param ids
      * @return
      */
-    List<String> queryNamesByIds(List<Long> ids);
+    List<CategoryVo> queryCategoryByIds(List<Long> ids);
 
 }

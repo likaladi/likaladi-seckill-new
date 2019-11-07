@@ -6,6 +6,8 @@ import com.likaladi.goods.dto.SpuDto;
 import com.likaladi.goods.dto.SpuQueryDto;
 import com.likaladi.goods.service.SpuService;
 import com.likaladi.goods.vo.SpuDetailVo;
+import com.likaladi.goods.vo.SpuSearchVo;
+import com.likaladi.goods.vo.SpuSpecVo;
 import com.likaladi.goods.vo.SpuVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,17 +47,26 @@ public class SpuController {
         return spuService.querySpuById(id);
     }
 
+
     @ApiOperation(value = "根据id获取Spu详情信息", notes = "根据id获取Spu详情信息")
     @GetMapping("/detail/{id}")
     public SpuDetailVo querySpuSkuDetail(@PathVariable Long id) {
         return spuService.querySpuSkuDetail(id);
     }
 
+
     @ApiOperation(value="分页查询规格属性", notes="分页查询规格属性")
     @PostMapping("/listByPage")
     public PageResult<SpuVo> listByPage(@RequestBody @Valid SpuQueryDto spuQueryDto) {
         return spuService.listByPage(spuQueryDto);
     }
+
+    @ApiOperation(value="分页查询上架商品", notes="分页查询上架商品")
+    @GetMapping("/upperShelfSpu")
+    public PageResult<SpuSearchVo> upperShelfSpu(@RequestBody @Valid SpuQueryDto spuQueryDto) {
+        return spuService.upperShelfSpu(spuQueryDto);
+    }
+
 
     @ApiOperation(value = "编辑商品", notes = "编辑商品")
     @PutMapping

@@ -14,7 +14,7 @@ import java.util.List;
 public class SpecAttrDto {
 
     @ApiModelProperty(value = "规格属性id")
-    private Long k;
+    private String k;
 
     @ApiModelProperty(value = "规格属性选中值")
     private List<String> v;

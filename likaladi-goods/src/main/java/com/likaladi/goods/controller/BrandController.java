@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(value = "品牌接口", description = "品牌接口")
 @Slf4j
@@ -69,5 +70,14 @@ public class BrandController {
         brandService.updateBrand(brandDto);
     }
 
-
+    @ApiOperation(value = "根据ids查询品牌信息", notes = "根据ids查询品牌信息")
+    @PutMapping("ids")
+    public List<BrandVo> queryListByIds(@RequestBody List<Long> brandIds){
+        List<Brand> brands = brandService.findByIds(brandIds);
+        return brands.stream().map(brand -> {
+            BrandVo brandVo = new BrandVo();
+            BeanUtils.copyProperties(brand, brandVo);
+            return brandVo;
+        }).collect(Collectors.toList());
+    }
 }

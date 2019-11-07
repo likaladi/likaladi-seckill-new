@@ -83,14 +83,14 @@ public class Goods {
      * 可搜索的规格属性集合：key是参数名，值是参数值，如下：
      *  {
      *    "specs":{
-     *            "内存":[4G,6G],
-     *           "颜色":"红色"
+     *            "13":[4G,6G],
+     *           "14":"红色"
      *           }
      *   }
      *   当存储到索引库时，elasticsearch会处理为两个字段：
      *
-     *   - specs.内存：[4G,6G]
-     *   - specs.颜色：红色
+     *   - specs.13：[4G,6G]
+     *   - specs.14：红色
      */
     private Map<String, Object> specs;
 

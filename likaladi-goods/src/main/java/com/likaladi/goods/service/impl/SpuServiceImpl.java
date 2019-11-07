@@ -109,21 +109,58 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
 
         List<Sku> skus = skuService.findListBy("spuId", id);
 
-        List<SpuSkuVo> spuSkuVoList = skus.stream().map(sku -> {
-            SpuSkuVo spuSkuVo = new SpuSkuVo();
-            BeanUtils.copyProperties(sku, spuSkuVo);
-            spuSkuVo.setSkuId(sku.getId());
-            spuSkuVo.setImageList(JSONObject.parseArray(sku.getImages(), String.class));
-
-            Map<String, Object> jsonMap = JSONObject.parseObject(sku.getOwnSpec(), Map.class);
-            spuSkuVo.setSpecs(jsonMap);
-            return spuSkuVo;
-        }).collect(Collectors.toList());
+        List<SpuSkuVo> spuSkuVoList = getSpuSkuVo(skus);
 
         return SpuDetailVo.builder()
                 .spuSpecVo(spuSpecVo)
                 .skus(spuSkuVoList)
                 .build();
+    }
+
+    @Override
+    public List<SpuDetailVo> querySpuSkuDetailByIds(List<SpuVo> spuVos) {
+        /** 将spuVos列表对象转换成对应的 spuVoMap：spuId -> SpuVo */
+        Map<Long, SpuVo> spuVoMap = spuVos.stream().collect(Collectors.toMap(SpuVo::getId, Function.identity()));
+
+        /** 从spuVos列表中 取spuId列表 */
+        List<Long> spuIds = spuVos.stream().map(SpuVo::getId).collect(Collectors.toList());
+
+        /** 将spuVos列表  转换对应的 spuId去重集合 */
+        Set<Long> categoryIds = spuVos.stream().map(spuVo -> spuVo.getId()).collect(Collectors.toSet());
+
+        /** 根据商品ids列表查询对应的 SpuDetail集合*/
+        List<SpuDetail> spuDetails = spuDetailService.findByIds(spuIds);
+
+        /** 根据多个分类id查询规格属性列表 */
+        List<SpecParamVo> specParamVos = specService.listByCategoryIds(categoryIds);
+
+        /** 根据分类id分组 将specParamVos对象转换成对应的 specParamMap：categoryId ->  List<SpecParamVo> */
+        Map<Long, List<SpecParamVo>> specParamMap = specParamVos.stream().collect(Collectors.groupingBy(SpecParamVo::getCategoryId));
+
+        /** 根据多个spuIds查询sku列表 */
+        List<Sku> skusList = skuService.queryBySpuIds(spuIds);
+
+        /** 根据spuId分组 将skus对象转换成对应的 skuMap：spuId ->  List<Sku> */
+        Map<Long, List<Sku>> skuMap = skusList.stream().collect(Collectors.groupingBy(Sku::getSpuId));
+
+        List<SpuDetailVo> spuDetailVos = new ArrayList<>();
+
+        spuDetails.forEach(spuDetail -> {
+
+            List<SpecParamVo> specParamVoList = specParamMap.get(spuVoMap.get(spuDetail.getSpuId()).getCid3());
+
+            SpuSpecVo spuSpecVo = specService.formatBySpecAttrList(specParamVos, spuDetail);
+
+            List<SpuSkuVo> spuSkuVoList = getSpuSkuVo(skuMap.get(spuDetail.getSpuId()));
+
+            spuDetailVos.add(
+                    SpuDetailVo.builder()
+                            .spuSpecVo(spuSpecVo)
+                            .skus(spuSkuVoList)
+                            .build()
+            );
+        });
+        return spuDetailVos;
     }
 
     @Override
@@ -143,9 +180,25 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
         return spuMapper.queryCountByCateogryIds(categoryIds);
     }
 
+    @Override
+    public PageResult<SpuSearchVo> upperShelfSpu(SpuQueryDto spuQueryDto) {
+
+        PageResult<SpuVo> pageResult = listByPage(spuQueryDto);
+
+        List<SpuVo> spuVos = pageResult.getItems();
+
+        List<Long> skuIds = spuVos.stream().map(SpuVo::getId).collect(Collectors.toList());
+
+        return null;
+    }
+
+
     private Spu dealWithSpu(SpuDto spuDto, Boolean isSave){
         Spu spu = new Spu();
         BeanUtils.copyProperties(spuDto, spu);
+        if(isSave){
+            spu.setId(null);
+        }
         spu.setMinPrice(
                 /** 最低销售价 */
                 spuDto.getSkus()
@@ -241,6 +294,21 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
             spuVo.setCategory3(categoryMap.get(spuVo.getCid3()));
         });
 
+    }
+
+    private List<SpuSkuVo> getSpuSkuVo(List<Sku> skus){
+        List<SpuSkuVo> spuSkuVoList = skus.stream().map(sku -> {
+            SpuSkuVo spuSkuVo = new SpuSkuVo();
+            BeanUtils.copyProperties(sku, spuSkuVo);
+            spuSkuVo.setSkuId(sku.getId());
+            spuSkuVo.setImageList(JSONObject.parseArray(sku.getImages(), String.class));
+
+            Map<String, Object> jsonMap = JSONObject.parseObject(sku.getOwnSpec(), Map.class);
+            spuSkuVo.setSpecs(jsonMap);
+            return spuSkuVo;
+        }).collect(Collectors.toList());
+
+        return spuSkuVoList;
     }
 
 }
