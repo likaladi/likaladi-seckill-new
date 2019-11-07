@@ -194,7 +194,8 @@ public class SearchServiceImpl implements SearchService {
      * @param spuVo
      * @return
      */
-    private Goods buildGoods(SpuVo spuVo, SpuDetailVo spuDetailVo) {
+    @Override
+    public Goods buildGoods(SpuVo spuVo, SpuDetailVo spuDetailVo) {
 
         /** 查询商品分类名称集合 */
         List<String> names = Arrays.asList(spuVo.getCategory1().getName(), spuVo.getCategory2().getName(), spuVo.getCategory3().getName());

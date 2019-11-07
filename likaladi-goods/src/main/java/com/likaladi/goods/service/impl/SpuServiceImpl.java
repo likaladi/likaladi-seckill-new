@@ -118,52 +118,6 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
     }
 
     @Override
-    public List<SpuDetailVo> querySpuSkuDetailByIds(List<SpuVo> spuVos) {
-        /** 将spuVos列表对象转换成对应的 spuVoMap：spuId -> SpuVo */
-        Map<Long, SpuVo> spuVoMap = spuVos.stream().collect(Collectors.toMap(SpuVo::getId, Function.identity()));
-
-        /** 从spuVos列表中 取spuId列表 */
-        List<Long> spuIds = spuVos.stream().map(SpuVo::getId).collect(Collectors.toList());
-
-        /** 将spuVos列表  转换对应的 spuId去重集合 */
-        Set<Long> categoryIds = spuVos.stream().map(spuVo -> spuVo.getId()).collect(Collectors.toSet());
-
-        /** 根据商品ids列表查询对应的 SpuDetail集合*/
-        List<SpuDetail> spuDetails = spuDetailService.findByIds(spuIds);
-
-        /** 根据多个分类id查询规格属性列表 */
-        List<SpecParamVo> specParamVos = specService.listByCategoryIds(categoryIds);
-
-        /** 根据分类id分组 将specParamVos对象转换成对应的 specParamMap：categoryId ->  List<SpecParamVo> */
-        Map<Long, List<SpecParamVo>> specParamMap = specParamVos.stream().collect(Collectors.groupingBy(SpecParamVo::getCategoryId));
-
-        /** 根据多个spuIds查询sku列表 */
-        List<Sku> skusList = skuService.queryBySpuIds(spuIds);
-
-        /** 根据spuId分组 将skus对象转换成对应的 skuMap：spuId ->  List<Sku> */
-        Map<Long, List<Sku>> skuMap = skusList.stream().collect(Collectors.groupingBy(Sku::getSpuId));
-
-        List<SpuDetailVo> spuDetailVos = new ArrayList<>();
-
-        spuDetails.forEach(spuDetail -> {
-
-            List<SpecParamVo> specParamVoList = specParamMap.get(spuVoMap.get(spuDetail.getSpuId()).getCid3());
-
-            SpuSpecVo spuSpecVo = specService.formatBySpecAttrList(specParamVos, spuDetail);
-
-            List<SpuSkuVo> spuSkuVoList = getSpuSkuVo(skuMap.get(spuDetail.getSpuId()));
-
-            spuDetailVos.add(
-                    SpuDetailVo.builder()
-                            .spuSpecVo(spuSpecVo)
-                            .skus(spuSkuVoList)
-                            .build()
-            );
-        });
-        return spuDetailVos;
-    }
-
-    @Override
     public PageResult<SpuVo> listByPage(SpuQueryDto spuQueryDto) {
 
         PageHelper.startPage(spuQueryDto.getPage(),spuQueryDto.getRows());
@@ -185,11 +139,9 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
 
         PageResult<SpuVo> pageResult = listByPage(spuQueryDto);
 
-        List<SpuVo> spuVos = pageResult.getItems();
+        List<SpuSearchVo> spuSearchVos = querySpuSkuDetailByIds(pageResult.getItems());
 
-        List<Long> skuIds = spuVos.stream().map(SpuVo::getId).collect(Collectors.toList());
-
-        return null;
+        return new PageResult<>(pageResult.getTotal(), spuSearchVos, null);
     }
 
 
@@ -309,6 +261,52 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
         }).collect(Collectors.toList());
 
         return spuSkuVoList;
+    }
+
+    /**
+     * List<SpuVo>转换对应的List<SpuDetailVo>
+     * @param spuVos
+     * @return
+     */
+    private List<SpuSearchVo> querySpuSkuDetailByIds(List<SpuVo> spuVos) {
+
+        //将spuVos列表  转换对应的 categoryId 去重集合
+        Set<Long> categoryIds = spuVos.stream().map(spuVo -> spuVo.getCid3()).collect(Collectors.toSet());
+        //根据多个分类id查询规格属性列表
+        List<SpecParamVo> specParamVos = specService.listByCategoryIds(categoryIds);
+        //根据分类id分组 将specParamVos对象转换成对应的 specParamMap：categoryId ->  List<SpecParamVo>
+        Map<Long, List<SpecParamVo>> specParamMap = specParamVos.stream().collect(Collectors.groupingBy(SpecParamVo::getCategoryId));
+
+        //从spuVos列表中 取spuId列表
+        List<Long> spuIds = spuVos.stream().map(SpuVo::getId).collect(Collectors.toList());
+        //根据商品ids列表查询对应的 SpuDetail集合
+        List<SpuDetail> spuDetails = spuDetailService.findByIds(spuIds);
+        //将spuVos列表对象转换成对应的 spuVoMap：spuId -> SpuVo
+        Map<Long, SpuDetail> spuDetailMap = spuDetails.stream().collect(Collectors.toMap(SpuDetail::getSpuId, Function.identity()));
+
+        //根据多个spuIds查询sku列表
+        List<Sku> skusList = skuService.queryBySpuIds(spuIds);
+        //根据spuId分组 将skus对象转换成对应的 skuMap：spuId ->  List<Sku>
+        Map<Long, List<Sku>> skuMap = skusList.stream().collect(Collectors.groupingBy(Sku::getSpuId));
+
+        List<SpuSearchVo> spuSearchVos = new ArrayList<>();
+
+        spuVos.forEach(spuVo -> {
+            //获取对应分类的规格属性
+            List<SpecParamVo> specParamVoList = specParamMap.get(spuVo.getCid3());
+            SpuSpecVo spuSpecVo = specService.formatBySpecAttrList(specParamVoList, spuDetailMap.get(spuVo.getId()));
+            List<SpuSkuVo> spuSkuVoList = getSpuSkuVo(skuMap.get(spuVo.getId()));
+            spuSearchVos.add(
+                    SpuSearchVo.builder().spuVo(spuVo).spuDetailVo(
+                            SpuDetailVo.builder()
+                                    .spuSpecVo(spuSpecVo)
+                                    .skus(spuSkuVoList)
+                                    .build()
+                    ).build()
+            );
+        });
+
+        return spuSearchVos;
     }
 
 }

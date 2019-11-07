@@ -51,13 +51,6 @@ public interface SpuService extends BaseService<Spu> {
     SpuDetailVo querySpuSkuDetail(Long id);
 
     /**
-     * 查询多个商品详情SpuDetail
-     * @param spuVos
-     * @return
-     */
-    List<SpuDetailVo> querySpuSkuDetailByIds(List<SpuVo> spuVos);
-
-    /**
      * 分页查询商品
      * @param spuQueryDto
      * @return

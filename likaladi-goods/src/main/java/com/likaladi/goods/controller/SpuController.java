@@ -62,7 +62,7 @@ public class SpuController {
     }
 
     @ApiOperation(value="分页查询上架商品", notes="分页查询上架商品")
-    @GetMapping("/upperShelfSpu")
+    @PostMapping("/upperShelfSpu")
     public PageResult<SpuSearchVo> upperShelfSpu(@RequestBody @Valid SpuQueryDto spuQueryDto) {
         return spuService.upperShelfSpu(spuQueryDto);
     }

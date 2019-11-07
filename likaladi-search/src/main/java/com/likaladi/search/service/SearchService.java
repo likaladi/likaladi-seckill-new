@@ -1,6 +1,8 @@
 package com.likaladi.search.service;
 
 import com.likaladi.base.PageResult;
+import com.likaladi.goods.vo.SpuDetailVo;
+import com.likaladi.goods.vo.SpuVo;
 import com.likaladi.search.entity.Goods;
 import com.likaladi.search.entity.SearchRequest;
 
@@ -20,6 +22,14 @@ public interface SearchService {
      * @param spuId
      */
     void deleteIndex(Long spuId);
+
+    /**
+     * 导入数据
+     * @param spuVo
+     * @param spuDetailVo
+     * @return
+     */
+    Goods buildGoods(SpuVo spuVo, SpuDetailVo spuDetailVo);
 
     PageResult<Goods> search(SearchRequest request);
 }

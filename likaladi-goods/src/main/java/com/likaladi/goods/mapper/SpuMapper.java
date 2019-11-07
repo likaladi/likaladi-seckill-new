@@ -40,6 +40,7 @@ public interface SpuMapper extends CommonMapper<Spu> {
                  +     "and s.min_price <![CDATA[<=]]>  #{condition.price} "
                  +     "and s.max_price <![CDATA[>=]]> #{condition.price} "
                  + "</if>"
+                 + " order by s.update_time desc"
             + "</script>"
     })
     List<SpuVo> selectByPage(@Param("condition") SpuQueryDto spuQueryDto);
