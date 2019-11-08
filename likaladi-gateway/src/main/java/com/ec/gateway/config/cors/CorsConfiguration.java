@@ -25,8 +25,11 @@ import reactor.core.publisher.Mono;
  */
 @Configuration
 public class CorsConfiguration {
-    //这里为支持的请求头，如果有自定义的header字段请自己添加
+    /**
+     * 这里为支持的请求头，如果有自定义的header字段请自己添加
+     */
     private static final String ALLOWED_HEADERS = "x-requested-with, authorization, Content-Type, Authorization, credential, X-XSRF-TOKEN, X-Auth-Token";
+
     private static final String ALLOWED_METHODS = "*";
     private static final String ALLOWED_ORIGIN = "*";
     private static final String ALLOWED_Expose = "*";

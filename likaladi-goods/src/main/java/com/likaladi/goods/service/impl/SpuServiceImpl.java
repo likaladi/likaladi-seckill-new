@@ -139,7 +139,11 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
 
         PageResult<SpuVo> pageResult = listByPage(spuQueryDto);
 
-        List<SpuSearchVo> spuSearchVos = querySpuSkuDetailByIds(pageResult.getItems());
+        List<SpuSearchVo> spuSearchVos = null;
+
+        if(!CollectionUtils.isEmpty(pageResult.getItems())){
+            spuSearchVos = querySpuSkuDetailByIds(pageResult.getItems());
+        }
 
         return new PageResult<>(pageResult.getTotal(), spuSearchVos, null);
     }
@@ -235,16 +239,18 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
             categorySet.add(spuVo.getCid3());
         });
 
-        List<CategoryVo> categories = categoryService.queryByIds(categorySet);
+        if(!CollectionUtils.isEmpty(categorySet)){
+            List<CategoryVo> categories = categoryService.queryByIds(categorySet);
 
-        /** 将categories集合 转成对应的categoryMap：id -> Category  */
-        Map<Long, CategoryVo> categoryMap = categories.stream().collect(Collectors.toMap(CategoryVo::getId, Function.identity()));
+            /** 将categories集合 转成对应的categoryMap：id -> Category  */
+            Map<Long, CategoryVo> categoryMap = categories.stream().collect(Collectors.toMap(CategoryVo::getId, Function.identity()));
 
-        spuVos.forEach(spuVo -> {
-            spuVo.setCategory1(categoryMap.get(spuVo.getCid1()));
-            spuVo.setCategory2(categoryMap.get(spuVo.getCid2()));
-            spuVo.setCategory3(categoryMap.get(spuVo.getCid3()));
-        });
+            spuVos.forEach(spuVo -> {
+                spuVo.setCategory1(categoryMap.get(spuVo.getCid1()));
+                spuVo.setCategory2(categoryMap.get(spuVo.getCid2()));
+                spuVo.setCategory3(categoryMap.get(spuVo.getCid3()));
+            });
+        }
 
     }
 
