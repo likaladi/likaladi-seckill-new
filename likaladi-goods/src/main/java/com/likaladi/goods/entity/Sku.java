@@ -49,8 +49,7 @@ public class Sku extends BaseEntity {
     private Integer stockNum;
 
     /**
-     * 是否有效，0已删除，1有效
+     * sku状态：0-下架；1-上架；2-删除
      */
-    @Column(name = "is_enable")
-    private Boolean isEnable;
+    private Integer state;
 }

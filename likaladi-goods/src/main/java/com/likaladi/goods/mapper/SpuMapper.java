@@ -57,4 +57,15 @@ public interface SpuMapper extends CommonMapper<Spu> {
                     + "</script>"
     })
     int queryCountByCateogryIds(@Param("cateogryIds") List<Long> categoryIds);
+
+
+    @Update({
+            "<script>"
+                    + "UPDATE spu SET saleable = #{saleable} where id in "
+                    + "<foreach item='id' index='index' collection='ids' open='(' separator=',' close=')'>"
+                    + "#{id}"
+                    + "</foreach>"
+            + "</script>"
+    })
+    int updateMoreSpuSaleable(@Param("ids") List<Long> ids, @Param("saleable") Integer saleable);
 }

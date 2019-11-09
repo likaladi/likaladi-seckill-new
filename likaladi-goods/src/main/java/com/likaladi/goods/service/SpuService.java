@@ -4,6 +4,7 @@ import com.likaladi.base.BaseService;
 import com.likaladi.base.PageResult;
 import com.likaladi.goods.dto.SpuDto;
 import com.likaladi.goods.dto.SpuQueryDto;
+import com.likaladi.goods.dto.SpuSkuStateDto;
 import com.likaladi.goods.entity.Spu;
 import com.likaladi.goods.vo.SpuDetailVo;
 import com.likaladi.goods.vo.SpuSearchVo;
@@ -69,4 +70,10 @@ public interface SpuService extends BaseService<Spu> {
      * @return
      */
     PageResult<SpuSearchVo> upperShelfSpu(SpuQueryDto spuQueryDto);
+
+    /**
+     * 编辑SPU或SKU上下架状态
+     * @param spuSkuStateDto
+     */
+    void editState(SpuSkuStateDto spuSkuStateDto);
 }

@@ -4,6 +4,7 @@ import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.goods.dto.SpuDto;
 import com.likaladi.goods.dto.SpuQueryDto;
+import com.likaladi.goods.dto.SpuSkuStateDto;
 import com.likaladi.goods.service.SpuService;
 import com.likaladi.goods.vo.SpuDetailVo;
 import com.likaladi.goods.vo.SpuSearchVo;
@@ -65,6 +66,12 @@ public class SpuController {
     @PostMapping("/upperShelfSpu")
     public PageResult<SpuSearchVo> upperShelfSpu(@RequestBody @Valid SpuQueryDto spuQueryDto) {
         return spuService.upperShelfSpu(spuQueryDto);
+    }
+
+    @ApiOperation(value="编辑SPU或者SKU上下架状态", notes="编辑SPU或者SKU上下架状态")
+    @PostMapping("/editState")
+    public void editState(@RequestBody @Valid SpuSkuStateDto spuSkuStateDto){
+        spuService.editState(spuSkuStateDto);
     }
 
 

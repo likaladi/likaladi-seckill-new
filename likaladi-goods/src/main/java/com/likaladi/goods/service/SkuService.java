@@ -18,4 +18,18 @@ public interface SkuService extends BaseService<Sku> {
      * @return
      */
     List<Sku> queryBySpuIds(List<Long> spuIds);
+
+    /**
+     * 根据spuid列表更新对应的sku上下架状态
+     * @param spuIds
+     * @param saleable
+     */
+    void updateSkuStateBySpuIds(List<Long> spuIds, Integer saleable);
+
+    /**
+     * 根据skuid列表更新sku上下架状态
+     * @param ids
+     * @param saleable
+     */
+    void updateSkuStateByIds(List<Long> ids, Integer saleable);
 }

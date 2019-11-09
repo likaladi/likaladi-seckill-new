@@ -8,6 +8,8 @@ import com.likaladi.base.PageResult;
 import com.likaladi.error.ErrorBuilder;
 import com.likaladi.goods.dto.*;
 import com.likaladi.goods.entity.*;
+import com.likaladi.goods.enums.SaleableEnum;
+import com.likaladi.goods.enums.SpuSkuEnum;
 import com.likaladi.goods.mapper.SpuMapper;
 import com.likaladi.goods.service.*;
 import com.likaladi.goods.vo.*;
@@ -148,6 +150,55 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
         return new PageResult<>(pageResult.getTotal(), spuSearchVos, null);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void editState(SpuSkuStateDto spuSkuStateDto) {
+        if(Objects.equals(SpuSkuEnum.SPU.getCode(), spuSkuStateDto.getOperateType())){
+            int result = spuMapper.updateMoreSpuSaleable(spuSkuStateDto.getIds(), spuSkuStateDto.getSaleable());
+            if(result <= 0){
+                ErrorBuilder.throwMsg("更新spu上下级状态失败");
+            }
+            skuService.updateSkuStateBySpuIds(spuSkuStateDto.getIds(), spuSkuStateDto.getSaleable());
+            return;
+        }
+
+        List<Sku> skus = skuService.findByIds(spuSkuStateDto.getIds());
+        if(Objects.equals(spuSkuStateDto.getIds(), skus.size())){
+            ErrorBuilder.throwMsg("sku存在不匹配的记录");
+        }
+
+        List<Long> spuIds = skus.stream().map(Sku::getSpuId).collect(Collectors.toList());
+
+        //修改SKU上架操作
+        if(Objects.equals(SaleableEnum.UPPER_SHELF.getCode(), spuSkuStateDto.getSaleable())){
+            skuService.updateSkuStateByIds(spuSkuStateDto.getIds(), spuSkuStateDto.getSaleable());
+            Spu spu = new Spu();
+            spu.setId(spuIds.get(0));
+            spu.setSaleable(true);
+            this.update(spu);
+            return;
+        }
+
+        skuService.updateSkuStateByIds(spuSkuStateDto.getIds(), spuSkuStateDto.getSaleable());
+        List<Sku> skuList = skuService.findListBy("spuId", spuIds.get(0));
+        Spu spu = this.findById(spuIds.get(0));
+        if(Objects.equals(SaleableEnum.UPPER_SHELF.getCode(), spuSkuStateDto.getSaleable())){
+            //过滤当前SPU对应的下架状态的SKU数量
+            int size = skuList.stream().
+                    filter(sku -> Objects.equals(SaleableEnum.LOWER_SHELF.getCode(), sku.getState()))
+                    .collect(Collectors.toList()).size();
+
+            //如果SPU过滤后的下架状态的SKU数量和入参修改的id数量保持一致，则更新对应的SPU为下架状态
+            if(Objects.equals(spuSkuStateDto.getIds().size(), size)){
+                Spu spuContion = new Spu();
+                spuContion.setId(spuIds.get(0));
+                spuContion.setSaleable(false);
+                this.update(spuContion);
+            }
+        }
+
+    }
+
 
     private Spu dealWithSpu(SpuDto spuDto, Boolean isSave){
         Spu spu = new Spu();
@@ -201,7 +252,7 @@ public class SpuServiceImpl extends BaseServiceImpl<Spu> implements SpuService {
                     JSONObject.toJSONString(Arrays.asList()) : JSONObject.toJSONString(spuSkuDto.getIndexList()));
             sku.setOwnSpec(CollectionUtils.isEmpty(spuSkuDto.getSpecs()) ?
                     JSONObject.toJSONString(Arrays.asList()) : JSONObject.toJSONString(spuSkuDto.getSpecs()));
-            sku.setIsEnable(true);
+            sku.setState(0);
             sku.setCreateTime(date);
             sku.setUpdateTime(date);
             return sku;
